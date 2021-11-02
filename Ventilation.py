@@ -38,8 +38,13 @@ class MyApp(QWidget):
         #         self.qtimer.start(1000)
         #
         #         self.show()
+        while True:
+            tmp = np.random.randint(0, 18)
+            if self.map[0][tmp] == 0:
+                break
+
         self.x = 0
-        self.y = 2
+        self.y = tmp
 
         # 타이머 생성
         self.qtimer = QTimer(self)
