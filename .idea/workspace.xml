@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c97d0a30-1016-4206-90d9-514099015cd0" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Ventilation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Ventilation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ventilation/01_Ventilation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Ventilation/01_Ventilation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/map1.py" beforeDir="false" afterPath="$PROJECT_DIR$/map1.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,6 +30,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../naver_weather-master" />
   </component>
   <component name="RunManager" selected="Python.01_Ventilation">
     <configuration name="01_Mario" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -164,26 +162,30 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state width="1893" height="165" key="GridCell.Tab.0.bottom" timestamp="1635819299437">
-      <screen x="0" y="0" width="1920" height="1032" />
+    <state x="2610" y="213" key="FileChooserDialogImpl" timestamp="1635866844406">
+      <screen x="1920" y="0" width="1920" height="1032" />
     </state>
-    <state width="1893" height="219" key="GridCell.Tab.0.bottom/0.0.1920.1032/1920.0.1920.1032@1920.0.1920.1032" timestamp="1634663170081" />
-    <state width="1893" height="165" key="GridCell.Tab.0.bottom/0.0.1920.1032@0.0.1920.1032" timestamp="1635819299437" />
-    <state width="1893" height="165" key="GridCell.Tab.0.center" timestamp="1635819299437">
-      <screen x="0" y="0" width="1920" height="1032" />
+    <state x="2610" y="213" key="FileChooserDialogImpl/0.0.1920.1032/1920.0.1920.1032@1920.0.1920.1032" timestamp="1635866844406" />
+    <state width="1893" height="164" key="GridCell.Tab.0.bottom" timestamp="1636219330529">
+      <screen x="1920" y="0" width="1920" height="1032" />
     </state>
-    <state width="1893" height="219" key="GridCell.Tab.0.center/0.0.1920.1032/1920.0.1920.1032@1920.0.1920.1032" timestamp="1634663170080" />
-    <state width="1893" height="165" key="GridCell.Tab.0.center/0.0.1920.1032@0.0.1920.1032" timestamp="1635819299437" />
-    <state width="1893" height="165" key="GridCell.Tab.0.left" timestamp="1635819299437">
-      <screen x="0" y="0" width="1920" height="1032" />
+    <state width="1893" height="164" key="GridCell.Tab.0.bottom/0.0.1920.1032/1920.0.1920.1032@1920.0.1920.1032" timestamp="1636219330529" />
+    <state width="1893" height="164" key="GridCell.Tab.0.bottom/0.0.1920.1032@0.0.1920.1032" timestamp="1636188687155" />
+    <state width="1893" height="164" key="GridCell.Tab.0.center" timestamp="1636219330529">
+      <screen x="1920" y="0" width="1920" height="1032" />
     </state>
-    <state width="1893" height="219" key="GridCell.Tab.0.left/0.0.1920.1032/1920.0.1920.1032@1920.0.1920.1032" timestamp="1634663170080" />
-    <state width="1893" height="165" key="GridCell.Tab.0.left/0.0.1920.1032@0.0.1920.1032" timestamp="1635819299437" />
-    <state width="1893" height="165" key="GridCell.Tab.0.right" timestamp="1635819299437">
-      <screen x="0" y="0" width="1920" height="1032" />
+    <state width="1893" height="164" key="GridCell.Tab.0.center/0.0.1920.1032/1920.0.1920.1032@1920.0.1920.1032" timestamp="1636219330529" />
+    <state width="1893" height="164" key="GridCell.Tab.0.center/0.0.1920.1032@0.0.1920.1032" timestamp="1636188687155" />
+    <state width="1893" height="164" key="GridCell.Tab.0.left" timestamp="1636219330529">
+      <screen x="1920" y="0" width="1920" height="1032" />
     </state>
-    <state width="1893" height="219" key="GridCell.Tab.0.right/0.0.1920.1032/1920.0.1920.1032@1920.0.1920.1032" timestamp="1634663170080" />
-    <state width="1893" height="165" key="GridCell.Tab.0.right/0.0.1920.1032@0.0.1920.1032" timestamp="1635819299437" />
+    <state width="1893" height="164" key="GridCell.Tab.0.left/0.0.1920.1032/1920.0.1920.1032@1920.0.1920.1032" timestamp="1636219330529" />
+    <state width="1893" height="164" key="GridCell.Tab.0.left/0.0.1920.1032@0.0.1920.1032" timestamp="1636188687155" />
+    <state width="1893" height="164" key="GridCell.Tab.0.right" timestamp="1636219330529">
+      <screen x="1920" y="0" width="1920" height="1032" />
+    </state>
+    <state width="1893" height="164" key="GridCell.Tab.0.right/0.0.1920.1032/1920.0.1920.1032@1920.0.1920.1032" timestamp="1636219330529" />
+    <state width="1893" height="164" key="GridCell.Tab.0.right/0.0.1920.1032@0.0.1920.1032" timestamp="1636188687155" />
     <state x="-7" y="0" width="974" height="1039" key="dock-window-1" timestamp="1635736757796">
       <screen x="0" y="0" width="1920" height="1032" />
     </state>

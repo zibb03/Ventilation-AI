@@ -20,8 +20,8 @@ class Chromosome:
         self.w1 = np.random.uniform(low=-1, high=1, size=(486, 48))
         self.b1 = np.random.uniform(low=-1, high=1, size=(48,))
 
-        self.w2 = np.random.uniform(low=-1, high=1, size=(48, 6))
-        self.b2 = np.random.uniform(low=-1, high=1, size=(6,))
+        self.w2 = np.random.uniform(low=-1, high=1, size=(48, 4))
+        self.b2 = np.random.uniform(low=-1, high=1, size=(4,))
 
         self.distance = 0
         self.max_distance = 0
@@ -135,16 +135,16 @@ class GeneticAlgorithm:
         self.generation += 1
         self.current_chromosome_index = 0
 
-class ENVEnvironment:
-
-    def __init__(self):
-        self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
-
-    def load(self):
-        return self.map
-
-    def reset(self):
-        return 0
+# class ENVEnvironment:
+#
+#     def __init__(self):
+#         self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
+#
+#     def load(self):
+#         return self.map
+#
+#     def reset(self):
+#         return self.map
 
 class MyApp(QWidget):
     def __init__(self):
@@ -154,15 +154,14 @@ class MyApp(QWidget):
 
         # self.env = retro.make(game='SuperMarioBros-Nes', state='Level1-1')
         self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
-        #self.ENVEnvironmnet =
-        #screen = self.ENVEnvironment.reset()
+        # self.env = ENVEnvironment()
+        # screen = self.ENVEnvironment.reset()
 
         # self.screen_width = self.map.shape[0] * 2
         # self.screen_height = self.map.shape[1] * 2
 
         # 창 크기 고정
-        self.setFixedSize(820, 448)
-
+        self.setFixedSize(454, 448)
         # self.screen_label = QLabel(self)
         # self.screen_label.setGeometry(0, 0, self.screen_width, self.screen_height)
 
@@ -194,26 +193,101 @@ class MyApp(QWidget):
         self.update()
 
     def step(self, press_buttons):
+        # U, D, L, R
+        # map[세로][가로]
         if press_buttons[0] == 1:
-            if self.map[self.x - 1][self.y] == 0:
-                self.map[self.x - 1][self.y] = 2
-                self.map[self.x][self.y] = 0
-                self.x = self.x - 1
+            if press_buttons[1] == 1:
+                if press_buttons[2] == 1:
+                    # UDL
+                    if press_buttons[3] == 1:
+                        # UDLR
+                        self.map[self.x][self.y] = 2
+                    else:
+                        if self.map[self.x][self.y - 1] == 0:
+                            self.map[self.x][self.y - 1] = 2
+                            self.map[self.x][self.y] = 0
+                            self.y = self.y - 1
+                elif press_buttons[3] == 1:
+                    # UDR
+                    if self.map[self.x][self.y + 1] == 0:
+                        self.map[self.x][self.y + 1] = 2
+                        self.map[self.x][self.y] = 0
+                        self.y = self.y + 1
+                else:
+                    # UD
+                    self.map[self.x][self.y] = 2
+            elif press_buttons[2] == 1:
+                if press_buttons[3] == 1:
+                    # ULR
+                    if self.map[self.x - 1][self.y] == 0:
+                        self.map[self.x - 1][self.y] = 2
+                        self.map[self.x][self.y] = 0
+                        self.x = self.x - 1
+                else:
+                    # UL
+                    if self.map[self.x - 1][self.y - 1] == 0:
+                        self.map[self.x - 1][self.y - 1] = 2
+                        self.map[self.x][self.y] = 0
+                        self.x = self.x - 1
+                        self.y = self.y - 1
+            elif press_buttons[3] == 1:
+                # UR
+                if self.map[self.x - 1][self.y + 1] == 0:
+                    self.map[self.x - 1][self.y + 1] = 2
+                    self.map[self.x][self.y] = 0
+                    self.x = self.x - 1
+                    self.y = self.y + 1
+            else:
+                # U
+                if self.map[self.x - 1][self.y] == 0:
+                    self.map[self.x - 1][self.y] = 2
+                    self.map[self.x][self.y] = 0
+                    self.x = self.x - 1
         elif press_buttons[1] == 1:
-            if self.map[self.x + 1][self.y] == 0:
-                self.map[self.x + 1][self.y] = 2
-                self.map[self.x][self.y] = 0
-                self.x = self.x + 1
+            if press_buttons[2] == 1:
+                if press_buttons[3] == 1:
+                    # DLR
+                    if self.map[self.x + 1][self.y] == 0:
+                        self.map[self.x + 1][self.y] = 2
+                        self.map[self.x][self.y] = 0
+                        self.x = self.x + 1
+                else:
+                    # DL
+                    if self.map[self.x + 1][self.y - 1] == 0:
+                        self.map[self.x + 1][self.y - 1] = 2
+                        self.map[self.x][self.y] = 0
+                        self.x = self.x + 1
+                        self.y = self.y - 1
+            elif press_buttons[3] == 1:
+                # DR
+                if self.map[self.x + 1][self.y + 1] == 0:
+                    self.map[self.x + 1][self.y + 1] = 2
+                    self.map[self.x][self.y] = 0
+                    self.x = self.x + 1
+                    self.y = self.y + 1
+            else:
+                # D
+                if self.map[self.x + 1][self.y] == 0:
+                    self.map[self.x + 1][self.y] = 2
+                    self.map[self.x][self.y] = 0
+                    self.x = self.x + 1
         elif press_buttons[2] == 1:
-            if self.map[self.x][self.y - 1] == 0:
-                self.map[self.x][self.y - 1] = 2
-                self.map[self.x][self.y] = 0
-                self.y = self.y - 1
+            if press_buttons[3] == 1:
+                # LR
+                self.map[self.x][self.y] = 2
+            else:
+                # L
+                if self.map[self.x][self.y - 1] == 0:
+                    self.map[self.x][self.y - 1] = 2
+                    self.map[self.x][self.y] = 0
+                    self.y = self.y - 1
         elif press_buttons[3] == 1:
+            # R
             if self.map[self.x][self.y + 1] == 0:
                 self.map[self.x][self.y + 1] = 2
                 self.map[self.x][self.y] = 0
                 self.y = self.y + 1
+        # print(self.x, self.y)
 
     def paintEvent(self, event):
         painter = QPainter()
@@ -353,7 +427,7 @@ class MyApp(QWidget):
         #     if player_float_state == 0x03:
         #         current_chromosome.win = 1
 
-        if current_chromosome.stop_frames > 20:
+        if current_chromosome.stop_frames > 5:
             current_chromosome.win = 1
 
             print(f'{self.ga.current_chromosome_index + 1}번 마리오: {current_chromosome.fitness()}')
@@ -364,23 +438,34 @@ class MyApp(QWidget):
                 self.ga.next_generation()
                 print(f'== {self.ga.generation} 세대 ==')
 
-            self.env.reset() #이게 문제
+            self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
+            while True:
+                tmp = np.random.randint(0, 18)
+                if self.map[0][tmp] == 0:
+                    break
+            self.x = 0
+            self.y = tmp
         else:
             predict = current_chromosome.predict(input_data)
             press_buttons = np.array([predict[0], predict[1], predict[2], predict[3]])
             self.step(press_buttons)
+            # print(predict)
+            # print(predict.shape[0])
+            # text = 'test'
+            # painter.drawText(300, 100, text)
+            # x, y
 
-        #     for i in range(predict.shape[0]):
-        #         if predict[i] == 1:
-        #             painter.setBrush(QBrush(Qt.magenta))
-        #         else:
-        #             painter.setBrush(QBrush(Qt.gray))
-        #         painter.drawEllipse(i * 40, 450, 10 * 2, 10 * 2)
-        #         text = ('U', 'D', 'L', 'R')[i]
-        #         painter.drawText(self.screen_width + i * 40, 480, text)
-        #
-        # painter.end()
+            for i in range(predict.shape[0]):
+                if predict[i] == 1:
+                    painter.setBrush(QBrush(Qt.magenta))
+                else:
+                    painter.setBrush(QBrush(Qt.gray))
+                painter.drawEllipse(300 + i * 40, 100, 10 * 2, 10 * 2)
+                text = ('U', 'D', 'L', 'R')[i]
+                painter.drawText(300 + i * 40, 140, text)
+                # 820, 448
 
+        painter.end()
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
