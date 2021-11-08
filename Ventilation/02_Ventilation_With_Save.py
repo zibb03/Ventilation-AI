@@ -50,8 +50,8 @@ class Chromosome:
         # fit = int(fit)
         # return fit
         # return int(max(self.distance ** 1.8 - self.frames ** 1.5 + min(max(self.distance - 50, 0), 1) * 2500 + self.win * 1000000, 1))
-        self.win = 0
-        return int(max(self.distance * 2.5 + self.move * 1.2 + self.win * 100, 1))
+        # return int(max(self.distance ** 1.8 - self.move ** 1.5 + min(max(self.distance - 20, 0), 1) * 2500 + self.win * 20, 1))
+        return int(max(self.distance * 1.2 + self.move * 2 + self.win * 20, 1))
 
 class GeneticAlgorithm:
     def __init__(self):
@@ -165,7 +165,7 @@ class Ventilation(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
+        self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map2.npy')
 
         # self.env = retro.make(game='SuperMarioBros-Nes', state='Level1-1')
         # self.env.reset()
@@ -191,7 +191,7 @@ class Ventilation(QWidget):
 
         self.game_timer = QTimer(self)
         self.game_timer.timeout.connect(self.update_game)
-        self.game_timer.start(1000)
+        self.game_timer.start(1000 // 60)
 
         self.show()
 
@@ -435,6 +435,10 @@ class Ventilation(QWidget):
         player_screen_position_x = 0
         current_chromosome.distance = self.x
 
+        for i in range(18):
+            if self.map[26][i] == 2:
+                current_chromosome.win = 1
+
         if current_chromosome.max_distance < current_chromosome.distance:
             current_chromosome.max_distance = current_chromosome.distance
             current_chromosome.stop_frames = 0
@@ -454,9 +458,7 @@ class Ventilation(QWidget):
         #     if player_float_state == 0x03:
         #         current_chromosome.win = 1
 
-        if current_chromosome.stop_frames > 5:
-            current_chromosome.win = 1
-
+        if current_chromosome.stop_frames > 5 or current_chromosome.win == 1:
             print(f'{self.ga.current_chromosome_index + 1}번 마리오: {current_chromosome.fitness()}')
 
             self.ga.current_chromosome_index += 1
@@ -466,7 +468,7 @@ class Ventilation(QWidget):
                 print(f'== {self.ga.generation} 세대 ==')
 
             # self.env.reset()
-            self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
+            self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map2.npy')
             while True:
                 tmp = np.random.randint(0, 18)
                 if self.map[0][tmp] == 0:
