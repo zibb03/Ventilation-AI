@@ -26,6 +26,7 @@ class Chromosome:
         self.distance = 0
         self.max_distance = 0
         self.frames = 0
+        self.move = 0
         self.stop_frames = 0
         self.win = 0
 
@@ -129,6 +130,7 @@ class GeneticAlgorithm:
             c.distance = 0
             c.max_distance = 0
             c.frames = 0
+            c.move = 0
             c.stop_frames = 0
             c.win = 0
 
@@ -193,6 +195,7 @@ class MyApp(QWidget):
         self.update()
 
     def step(self, press_buttons):
+        current_chromosome = self.ga.chromosomes[self.ga.current_chromosome_index]
         # U, D, L, R
         # map[세로][가로]
         if press_buttons[0] == 1:
@@ -207,12 +210,14 @@ class MyApp(QWidget):
                             self.map[self.x][self.y - 1] = 2
                             self.map[self.x][self.y] = 0
                             self.y = self.y - 1
+                            current_chromosome.move += 1
                 elif press_buttons[3] == 1:
                     # UDR
                     if self.map[self.x][self.y + 1] == 0:
                         self.map[self.x][self.y + 1] = 2
                         self.map[self.x][self.y] = 0
                         self.y = self.y + 1
+                        current_chromosome.move += 1
                 else:
                     # UD
                     self.map[self.x][self.y] = 2
@@ -223,6 +228,7 @@ class MyApp(QWidget):
                         self.map[self.x - 1][self.y] = 2
                         self.map[self.x][self.y] = 0
                         self.x = self.x - 1
+                        current_chromosome.move += 1
                 else:
                     # UL
                     if self.map[self.x - 1][self.y - 1] == 0:
@@ -230,6 +236,7 @@ class MyApp(QWidget):
                         self.map[self.x][self.y] = 0
                         self.x = self.x - 1
                         self.y = self.y - 1
+                        current_chromosome.move += 1
             elif press_buttons[3] == 1:
                 # UR
                 if self.map[self.x - 1][self.y + 1] == 0:
@@ -237,12 +244,14 @@ class MyApp(QWidget):
                     self.map[self.x][self.y] = 0
                     self.x = self.x - 1
                     self.y = self.y + 1
+                    current_chromosome.move += 1
             else:
                 # U
                 if self.map[self.x - 1][self.y] == 0:
                     self.map[self.x - 1][self.y] = 2
                     self.map[self.x][self.y] = 0
                     self.x = self.x - 1
+                    current_chromosome.move += 1
         elif press_buttons[1] == 1:
             if press_buttons[2] == 1:
                 if press_buttons[3] == 1:
@@ -251,6 +260,7 @@ class MyApp(QWidget):
                         self.map[self.x + 1][self.y] = 2
                         self.map[self.x][self.y] = 0
                         self.x = self.x + 1
+                        current_chromosome.move += 1
                 else:
                     # DL
                     if self.map[self.x + 1][self.y - 1] == 0:
@@ -258,6 +268,7 @@ class MyApp(QWidget):
                         self.map[self.x][self.y] = 0
                         self.x = self.x + 1
                         self.y = self.y - 1
+                        current_chromosome.move += 1
             elif press_buttons[3] == 1:
                 # DR
                 if self.map[self.x + 1][self.y + 1] == 0:
@@ -265,12 +276,14 @@ class MyApp(QWidget):
                     self.map[self.x][self.y] = 0
                     self.x = self.x + 1
                     self.y = self.y + 1
+                    current_chromosome.move += 1
             else:
                 # D
                 if self.map[self.x + 1][self.y] == 0:
                     self.map[self.x + 1][self.y] = 2
                     self.map[self.x][self.y] = 0
                     self.x = self.x + 1
+                    current_chromosome.move += 1
         elif press_buttons[2] == 1:
             if press_buttons[3] == 1:
                 # LR
@@ -281,12 +294,14 @@ class MyApp(QWidget):
                     self.map[self.x][self.y - 1] = 2
                     self.map[self.x][self.y] = 0
                     self.y = self.y - 1
+                    current_chromosome.move += 1
         elif press_buttons[3] == 1:
             # R
             if self.map[self.x][self.y + 1] == 0:
                 self.map[self.x][self.y + 1] = 2
                 self.map[self.x][self.y] = 0
                 self.y = self.y + 1
+                current_chromosome.move += 1
         # print(self.x, self.y)
 
     def paintEvent(self, event):
@@ -411,13 +426,15 @@ class MyApp(QWidget):
 
         player_horizon_position = 0
         player_screen_position_x = 0
-        current_chromosome.distance = self.y
+        current_chromosome.distance = self.x
 
         if current_chromosome.max_distance < current_chromosome.distance:
             current_chromosome.max_distance = current_chromosome.distance
             current_chromosome.stop_frames = 0
         else:
             current_chromosome.stop_frames += 1
+
+        # print(current_chromosome.max_distance, current_chromosome.distance)
 
         player_float_state = 0
         player_state = 0
