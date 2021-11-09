@@ -26,7 +26,11 @@ class Chromosome:
         self.frames = 0
         self.move = 0
         self.stop_frames = 0
-        self.win = 0
+        self.win1 = 0
+        self.win2 = 0
+        self.win3 = 0
+        self.win4 = 0
+        self.win5 = 0
 
     def predict(self, data):
         l1 = relu(np.matmul(data, self.w1) + self.b1)
@@ -51,7 +55,7 @@ class Chromosome:
         # return fit
         # return int(max(self.distance ** 1.8 - self.frames ** 1.5 + min(max(self.distance - 50, 0), 1) * 2500 + self.win * 1000000, 1))
         # return int(max(self.distance ** 1.8 - self.move ** 1.5 + min(max(self.distance - 20, 0), 1) * 2500 + self.win * 20, 1))
-        return int(max(self.distance * 1.2 + self.move * 2 + self.win * 20, 1))
+        return int(max(self.distance * 1.2 + self.move * 2 + self.win1 *  + self.win2 * 5 + self.win3 * 10 + self.win4 * 20 + self.win5 * 30, 1))
 
 class GeneticAlgorithm:
     def __init__(self):
@@ -155,7 +159,11 @@ class GeneticAlgorithm:
             c.frames = 0
             c.move = 0
             c.stop_frames = 0
-            c.win = 0
+            c.win1 = 0
+            c.win2 = 0
+            c.win3 = 0
+            c.win4 = 0
+            c.win5 = 0
 
         self.generation += 1
         self.current_chromosome_index = 0
@@ -435,9 +443,33 @@ class Ventilation(QWidget):
         player_screen_position_x = 0
         current_chromosome.distance = self.x
 
-        for i in range(18):
-            if self.map[26][i] == 2:
-                current_chromosome.win = 1
+        for i in range(4):
+            if self.map[i + 10][0] == 2:
+                current_chromosome.win1 = 1
+                break
+        for i in range(2):
+            if self.map[26][i + 3] == 2:
+                current_chromosome.win1 = 1
+                break
+        for i in range(6):
+            for j in range(4):
+                if self.map[i + 16][j + 6] == 2:
+                    current_chromosome.win2 = 1
+                    break
+        for i in range(5):
+            for i in range(5):
+                if self.map[i + 16][j + 12] == 2:
+                    current_chromosome.win3 = 1
+                    break
+        for i in range(12):
+            for i in range(5):
+                if self.map[i + 18][j + 5] == 2:
+                    current_chromosome.win4 = 1
+                    break
+        for i in range(5):
+            if self.map[26][i + 9] == 2:
+                current_chromosome.win5 = 1
+                break
 
         if current_chromosome.max_distance < current_chromosome.distance:
             current_chromosome.max_distance = current_chromosome.distance
@@ -458,7 +490,7 @@ class Ventilation(QWidget):
         #     if player_float_state == 0x03:
         #         current_chromosome.win = 1
 
-        if current_chromosome.stop_frames > 5 or current_chromosome.win == 1:
+        if current_chromosome.stop_frames > 5 or current_chromosome.win1 == 1 or current_chromosome.win5 == 1:
             print(f'{self.ga.current_chromosome_index + 1}번 마리오: {current_chromosome.fitness()}')
 
             self.ga.current_chromosome_index += 1
