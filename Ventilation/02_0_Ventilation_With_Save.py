@@ -55,7 +55,7 @@ class Chromosome:
         # return fit
         # return int(max(self.distance ** 1.8 - self.frames ** 1.5 + min(max(self.distance - 50, 0), 1) * 2500 + self.win * 1000000, 1))
         # return int(max(self.distance ** 1.8 - self.move ** 1.5 + min(max(self.distance - 20, 0), 1) * 2500 + self.win * 20, 1))
-        return int(max(self.distance * 1.2 + self.move * 2 + self.win1 *  + self.win2 * 5 + self.win3 * 10 + self.win4 * 20 + self.win5 * 30, 1))
+        return int(max(self.distance * 1.2 + self.move * 2 + self.win1 * 5 + self.win2 * 5 + self.win3 * 10 + self.win4 * 20 + self.win5 * 30, 1))
 
 class GeneticAlgorithm:
     def __init__(self):

@@ -1,4 +1,5 @@
 # 02. mario_with_save.py
+# 1개씩 학습
 import retro
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
@@ -54,8 +55,10 @@ class Chromosome:
         # fit = int(fit)
         # return fit
         # return int(max(self.distance ** 1.8 - self.frames ** 1.5 + min(max(self.distance - 50, 0), 1) * 2500 + self.win * 1000000, 1))
-        # return int(max(self.distance ** 1.8 - self.move ** 1.5 + min(max(self.distance - 20, 0), 1) * 2500 + self.win * 20, 1))
-        return int(max(self.distance * 1.2 + self.move * 2 + self.win1 *  + self.win2 * 5 + self.win3 * 10 + self.win4 * 20 + self.win5 * 30, 1))
+        # print(self.distance, self.frames)
+        # print((self.distance * 2 - self.frames + max(self.move - 10, 0) * 5 + self.win1 * 1000))
+        return int(max(self.distance ** 2 - self.frames + max(self.move - 5, 0) * 5 + self.win1 * 1000, 1))
+        # return int(max(self.distance * 1.2 + self.move * 2 + self.win1 * 5 + self.win2 * 5 + self.win3 * 10 + self.win4 * 20 + self.win5 * 30, 1))
 
 class GeneticAlgorithm:
     def __init__(self):
@@ -185,15 +188,15 @@ class Ventilation(QWidget):
         self.setFixedSize(454, 448)
         self.setWindowTitle('Ventilation-AI')
 
-        while True:
-            tmp = np.random.randint(0, 18)
-            if self.map[0][tmp] == 0:
-                break
+        # while True:
+        #     tmp = np.random.randint(0, 18)
+        #     if self.map[0][tmp] == 0:
+        #         break
 
         self.x = 0
-        self.y = tmp
+        self.y = 3
         self.past_x = 0
-        self.past_y = tmp
+        self.past_y = 3
 
         self.ga = GeneticAlgorithm()
 
@@ -443,10 +446,10 @@ class Ventilation(QWidget):
         player_screen_position_x = 0
         current_chromosome.distance = self.x
 
-        for i in range(4):
-            if self.map[i + 10][0] == 2:
-                current_chromosome.win1 = 1
-                break
+        # for i in range(4):
+        #     if self.map[i + 10][0] == 2:
+        #         current_chromosome.win1 = 1
+        #         break
         for i in range(2):
             if self.map[26][i + 3] == 2:
                 current_chromosome.win1 = 1
@@ -494,19 +497,19 @@ class Ventilation(QWidget):
             print(f'{self.ga.current_chromosome_index + 1}번 마리오: {current_chromosome.fitness()}')
 
             self.ga.current_chromosome_index += 1
-
+            # print(current_chromosome.frames)
             if self.ga.current_chromosome_index == 10:
                 self.ga.next_generation()
                 print(f'== {self.ga.generation} 세대 ==')
 
             # self.env.reset()
             self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map2.npy')
-            while True:
-                tmp = np.random.randint(0, 18)
-                if self.map[0][tmp] == 0:
-                    break
+            # while True:
+            #     tmp = np.random.randint(0, 18)
+            #     if self.map[0][tmp] == 0:
+            #         break
             self.x = 0
-            self.y = tmp
+            self.y = 3
         else:
             predict = current_chromosome.predict(input_data)
             press_buttons = np.array([predict[0], predict[1], predict[2], predict[3]])
