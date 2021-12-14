@@ -4,6 +4,46 @@
     <list default="true" id="c97d0a30-1016-4206-90d9-514099015cd0" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Ventilation/04_Ventilation_Replay.py" beforeDir="false" afterPath="$PROJECT_DIR$/Ventilation/04_Ventilation_Replay.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/0/b1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/0/b2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/0/w1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/0/w2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/1/b1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/1/b2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/1/w1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/1/w2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/2/b1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/2/b2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/2/w1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/2/w2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/3/b1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/3/b2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/3/w1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/3/w2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/4/b1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/4/b2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/4/w1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/4/w2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/5/b1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/5/b2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/5/w1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/5/w2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/6/b1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/6/b2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/6/w1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/6/w2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/7/b1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/7/b2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/7/w1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/7/w2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/8/b1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/8/b2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/8/w1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/8/w2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/9/b1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/9/b2.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/9/w1.npy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/2629/9/w2.npy" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,13 +64,14 @@
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/Ventilation" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../GA-Mario" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -101,6 +142,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="02_2_Ventilation_With_Save" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Ventilation-AI" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Ventilation" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Ventilation/02_2_Ventilation_With_Save.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="04_Ventilation_Replay" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Ventilation-AI" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -122,37 +184,17 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="map2" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Ventilation-AI" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/map2.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Python.04_Ventilation_Replay" />
+        <item itemvalue="Python.02_2_Ventilation_With_Save" />
         <item itemvalue="Python.02_1_Ventilation_With_Save" />
         <item itemvalue="Python.02_0_Ventilation_With_Save (1)" />
         <item itemvalue="Python.02_0_Ventilation_With_Save" />
-        <item itemvalue="Python.map2" />
       </list>
     </recent_temporary>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="SvnConfiguration">
     <configuration />
   </component>
@@ -165,54 +207,5 @@
       <updated>1634087054553</updated>
     </task>
     <servers />
-  </component>
-  <component name="WindowStateProjectService">
-    <state x="2610" y="213" key="FileChooserDialogImpl" timestamp="1635866844406">
-      <screen x="1920" y="0" width="1920" height="1032" />
-    </state>
-    <state x="2610" y="213" key="FileChooserDialogImpl/0.0.1920.1032/1920.0.1920.1032@1920.0.1920.1032" timestamp="1635866844406" />
-    <state width="1893" height="163" key="GridCell.Tab.0.bottom" timestamp="1636987877463">
-      <screen x="1920" y="0" width="1920" height="1032" />
-    </state>
-    <state width="1893" height="164" key="GridCell.Tab.0.bottom/0.0.1920.1032/1920.0.1920.1032@0.0.1920.1032" timestamp="1636546161610" />
-    <state width="1893" height="163" key="GridCell.Tab.0.bottom/0.0.1920.1032/1920.0.1920.1032@1920.0.1920.1032" timestamp="1636987877463" />
-    <state width="1893" height="163" key="GridCell.Tab.0.bottom/0.0.1920.1032@0.0.1920.1032" timestamp="1636784872710" />
-    <state width="1893" height="163" key="GridCell.Tab.0.center" timestamp="1636987877463">
-      <screen x="1920" y="0" width="1920" height="1032" />
-    </state>
-    <state width="1893" height="164" key="GridCell.Tab.0.center/0.0.1920.1032/1920.0.1920.1032@0.0.1920.1032" timestamp="1636546161610" />
-    <state width="1893" height="163" key="GridCell.Tab.0.center/0.0.1920.1032/1920.0.1920.1032@1920.0.1920.1032" timestamp="1636987877463" />
-    <state width="1893" height="163" key="GridCell.Tab.0.center/0.0.1920.1032@0.0.1920.1032" timestamp="1636784872710" />
-    <state width="1893" height="163" key="GridCell.Tab.0.left" timestamp="1636987877463">
-      <screen x="1920" y="0" width="1920" height="1032" />
-    </state>
-    <state width="1893" height="164" key="GridCell.Tab.0.left/0.0.1920.1032/1920.0.1920.1032@0.0.1920.1032" timestamp="1636546161610" />
-    <state width="1893" height="163" key="GridCell.Tab.0.left/0.0.1920.1032/1920.0.1920.1032@1920.0.1920.1032" timestamp="1636987877463" />
-    <state width="1893" height="163" key="GridCell.Tab.0.left/0.0.1920.1032@0.0.1920.1032" timestamp="1636784872709" />
-    <state width="1893" height="163" key="GridCell.Tab.0.right" timestamp="1636987877463">
-      <screen x="1920" y="0" width="1920" height="1032" />
-    </state>
-    <state width="1893" height="164" key="GridCell.Tab.0.right/0.0.1920.1032/1920.0.1920.1032@0.0.1920.1032" timestamp="1636546161610" />
-    <state width="1893" height="163" key="GridCell.Tab.0.right/0.0.1920.1032/1920.0.1920.1032@1920.0.1920.1032" timestamp="1636987877463" />
-    <state width="1893" height="163" key="GridCell.Tab.0.right/0.0.1920.1032@0.0.1920.1032" timestamp="1636784872710" />
-    <state x="-7" y="0" width="1294" height="1039" key="dock-window-1" timestamp="1636980734116">
-      <screen x="0" y="0" width="1920" height="1032" />
-    </state>
-    <state x="-7" y="0" width="1294" height="1039" key="dock-window-1/0.0.1920.1032/1920.0.1920.1032@1920.0.1920.1032" timestamp="1636980734116" />
-    <state x="-7" y="0" width="974" height="1039" key="dock-window-1/0.0.1920.1032@0.0.1920.1032" timestamp="1636780307438" />
-    <state x="-7" y="0" width="974" height="1039" key="dock-window-2" timestamp="1636986882373">
-      <screen x="0" y="0" width="1920" height="1032" />
-    </state>
-    <state x="-7" y="0" width="974" height="1039" key="dock-window-2/0.0.1920.1032/1920.0.1920.1032@1920.0.1920.1032" timestamp="1636986882373" />
-    <state x="-7" y="0" width="974" height="1039" key="dock-window-2/0.0.1920.1032@0.0.1920.1032" timestamp="1636783861713" />
-    <state x="-7" y="0" width="974" height="1039" key="dock-window-3" timestamp="1635749778384">
-      <screen x="0" y="0" width="1920" height="1032" />
-    </state>
-    <state x="-7" y="0" width="974" height="1039" key="dock-window-3/0.0.1920.1032@0.0.1920.1032" timestamp="1635749778384" />
-    <state x="2459" y="-1" width="840" height="1034" key="search.everywhere.popup" timestamp="1636982393874">
-      <screen x="1920" y="0" width="1920" height="1032" />
-    </state>
-    <state x="2459" y="-1" width="840" height="1034" key="search.everywhere.popup/0.0.1920.1032/1920.0.1920.1032@1920.0.1920.1032" timestamp="1636982393874" />
-    <state x="539" y="-1" width="840" height="1034" key="search.everywhere.popup/0.0.1920.1032@0.0.1920.1032" timestamp="1634096820808" />
   </component>
 </project>

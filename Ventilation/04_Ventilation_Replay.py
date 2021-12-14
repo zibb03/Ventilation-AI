@@ -9,8 +9,10 @@ import random
 import os
 
 relu = lambda X: np.maximum(0, X)
-sigmoid = lambda X: 1.0 / (1.0 + np.exp(-X))
+sigmoid = lambda x: 1.0 / (1.0 + np.exp(-x))
 
+def except_hook(cls, exception, traceback):
+    sys.__excepthook__(cls, exception, traceback)
 
 class Chromosome:
     def __init__(self):
@@ -33,8 +35,14 @@ class Chromosome:
 
     def predict(self, data):
         self.l1 = relu(np.matmul(data, self.w1) + self.b1)
+        print("a")
+        # a = np.matmul(self.l1, self.w2) + self.b2
+        # a = 1.0 / (1.0 + np.exp(max(-np.matmul(self.l1, self.w2) + self.b2, 0.0001)))
+        # print(a)
+        # print(sigmoid(a))
         output = sigmoid(np.matmul(self.l1, self.w2) + self.b2)
         result = (output > 0.5).astype(np.int)
+        print(result)
         return result
 
     def fitness(self):
@@ -62,8 +70,8 @@ class Chromosome:
 class Ventilation(QWidget):
     def __init__(self):
         super().__init__()
-        self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map2.npy')
-
+        self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
+        sys.excepthook = except_hook
         # self.env = retro.make(game='SuperMarioBros-Nes', state=f'Level1-1')
         # screen = self.env.reset()
 
@@ -86,7 +94,7 @@ class Ventilation(QWidget):
         #         break
 
         self.x = 0
-        self.y = 3
+        self.y = 2
 
         # self.screen_label = QLabel(self)
         # self.screen_label.setGeometry(0, 0, self.screen_width, self.screen_height)
@@ -95,8 +103,8 @@ class Ventilation(QWidget):
         # self.info_label.setGeometry(self.screen_width + 320, self.screen_height - 70, 70, 70)
         # self.info_label.setText('?????세대\n?번 마리오\n???????')
 
-        self.generation = 64550
-        self.chromosome_index = 4
+        self.generation = 2
+        self.chromosome_index = 0
         self.current_chromosome = Chromosome()
         self.current_chromosome.w1 = np.load(f'../data/{self.generation}/{self.chromosome_index}/w1.npy')
         self.current_chromosome.b1 = np.load(f'../data/{self.generation}/{self.chromosome_index}/b1.npy')
@@ -105,12 +113,12 @@ class Ventilation(QWidget):
 
         self.game_timer = QTimer(self)
         self.game_timer.timeout.connect(self.update_game)
-        self.game_timer.start(1000)
+        self.game_timer.start(1000 // 60)
 
         self.show()
 
     def step(self, press_buttons):
-        current_chromosome = self.ga.chromosomes[self.ga.current_chromosome_index]
+        # current_chromosome = self.ga.chromosomes[self.ga.current_chromosome_index]
         # U, D, L, R
         # map[세로][가로]
         if press_buttons[0] == 1:
@@ -121,14 +129,14 @@ class Ventilation(QWidget):
                         # UDLR
                         self.map[self.x][self.y] = 2
                     else:
-                        if self.map[self.x][self.y - 1] == 0 and self.x >= 0 and self.y >= 0:
+                        if self.x + 1 != 27 and self.map[self.x][self.y - 1] == 0 and self.x >= 0 and self.y >= 0:
                             self.map[self.x][self.y - 1] = 2
                             self.map[self.x][self.y] = 0
                             self.y = self.y - 1
                             self.current_chromosome.move += 1
                 elif press_buttons[3] == 1:
                     # UDR
-                    if self.map[self.x][self.y + 1] == 0 and self.x >= 0 and self.y >= 0:
+                    if self.x + 1 != 27 and self.map[self.x][self.y + 1] == 0 and self.x >= 0 and self.y >= 0:
                         self.map[self.x][self.y + 1] = 2
                         self.map[self.x][self.y] = 0
                         self.y = self.y + 1
@@ -139,14 +147,14 @@ class Ventilation(QWidget):
             elif press_buttons[2] == 1:
                 if press_buttons[3] == 1:
                     # ULR
-                    if self.map[self.x - 1][self.y] == 0 and self.x > 0 and self.y >= 0:
+                    if self.x + 1 != 27 and self.map[self.x - 1][self.y] == 0 and self.x > 0 and self.y >= 0:
                         self.map[self.x - 1][self.y] = 2
                         self.map[self.x][self.y] = 0
                         self.x = self.x - 1
                         self.current_chromosome.move += 1
                 else:
                     # UL
-                    if self.map[self.x - 1][self.y - 1] == 0 and self.x > 0 and self.y >= 0:
+                    if self.x + 1 != 27 and self.map[self.x - 1][self.y - 1] == 0 and self.x > 0 and self.y >= 0:
                         self.map[self.x - 1][self.y - 1] = 2
                         self.map[self.x][self.y] = 0
                         self.x = self.x - 1
@@ -154,7 +162,7 @@ class Ventilation(QWidget):
                         self.current_chromosome.move += 1
             elif press_buttons[3] == 1:
                 # UR
-                if self.map[self.x - 1][self.y + 1] == 0 and self.x > 0 and self.y >= 0:
+                if self.x + 1 != 27 and self.map[self.x - 1][self.y + 1] == 0 and self.x > 0 and self.y >= 0:
                     self.map[self.x - 1][self.y + 1] = 2
                     self.map[self.x][self.y] = 0
                     self.x = self.x - 1
@@ -162,7 +170,7 @@ class Ventilation(QWidget):
                     self.current_chromosome.move += 1
             else:
                 # U
-                if self.map[self.x - 1][self.y] == 0 and self.x > 0 and self.y >= 0:
+                if self.x + 1 != 27 and self.map[self.x - 1][self.y] == 0 and self.x > 0 and self.y >= 0:
                     self.map[self.x - 1][self.y] = 2
                     self.map[self.x][self.y] = 0
                     self.x = self.x - 1
@@ -171,14 +179,14 @@ class Ventilation(QWidget):
             if press_buttons[2] == 1:
                 if press_buttons[3] == 1:
                     # DLR
-                    if self.map[self.x + 1][self.y] == 0 and self.x >= 0 and self.y >= 0:
+                    if self.x + 1 != 27 and self.map[self.x + 1][self.y] == 0 and self.x >= 0 and self.y >= 0:
                         self.map[self.x + 1][self.y] = 2
                         self.map[self.x][self.y] = 0
                         self.x = self.x + 1
                         self.current_chromosome.move += 1
                 else:
                     # DL
-                    if self.map[self.x + 1][self.y - 1] == 0 and self.x >= 0 and self.y >= 0:
+                    if self.x + 1 != 27 and self.map[self.x + 1][self.y - 1] == 0 and self.x >= 0 and self.y >= 0:
                         self.map[self.x + 1][self.y - 1] = 2
                         self.map[self.x][self.y] = 0
                         self.x = self.x + 1
@@ -186,7 +194,7 @@ class Ventilation(QWidget):
                         self.current_chromosome.move += 1
             elif press_buttons[3] == 1:
                 # DR
-                if self.map[self.x + 1][self.y + 1] == 0 and self.x >= 0 and self.y >= 0:
+                if self.x + 1 != 27 and self.map[self.x + 1][self.y + 1] == 0 and self.x >= 0 and self.y >= 0:
                     self.map[self.x + 1][self.y + 1] = 2
                     self.map[self.x][self.y] = 0
                     self.x = self.x + 1
@@ -194,7 +202,7 @@ class Ventilation(QWidget):
                     self.current_chromosome.move += 1
             else:
                 # D
-                if self.map[self.x + 1][self.y] == 0 and self.x >= 0 and self.y >= 0:
+                if self.x + 1 != 27 and self.map[self.x + 1][self.y] == 0 and self.x >= 0 and self.y >= 0:
                     self.map[self.x + 1][self.y] = 2
                     self.map[self.x][self.y] = 0
                     self.x = self.x + 1
@@ -205,14 +213,14 @@ class Ventilation(QWidget):
                 self.map[self.x][self.y] = 2
             else:
                 # L
-                if self.map[self.x][self.y - 1] == 0 and self.x >= 0 and self.y >= 0:
+                if self.x + 1 != 27 and self.map[self.x][self.y - 1] == 0 and self.x >= 0 and self.y >= 0:
                     self.map[self.x][self.y - 1] = 2
                     self.map[self.x][self.y] = 0
                     self.y = self.y - 1
                     self.current_chromosome.move += 1
         elif press_buttons[3] == 1:
             # R
-            if self.map[self.x][self.y + 1] == 0 and self.x >= 0 and self.y >= 0:
+            if self.x + 1 != 27 and self.map[self.x][self.y + 1] == 0 and self.x >= 0 and self.y >= 0:
                 self.map[self.x][self.y + 1] = 2
                 self.map[self.x][self.y] = 0
                 self.y = self.y + 1
@@ -377,7 +385,7 @@ class Ventilation(QWidget):
 
             self.current_chromosome.clear()
             # self.env.reset()
-            self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map2.npy')
+            self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
             # while True:
             #     tmp = np.random.randint(0, 18)
             #     if self.map[0][tmp] == 0:
