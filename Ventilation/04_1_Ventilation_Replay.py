@@ -7,6 +7,7 @@ import numpy as np
 import sys
 import random
 import os
+import time
 
 relu = lambda X: np.maximum(0, X)
 sigmoid = lambda x: 1.0 / (1.0 + np.exp(-x))
@@ -22,6 +23,9 @@ class Chromosome:
         self.w2 = np.random.uniform(low=-1, high=1, size=(48, 4))
         self.b2 = np.random.uniform(low=-1, high=1, size=(4,))
 
+        self.start = [2, 3, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        self.cnt = 0
+
         self.distance = 0
         self.max_distance = 0
         self.frames = 0
@@ -33,16 +37,23 @@ class Chromosome:
         self.win4 = 0
         self.win5 = 0
 
+        self.x = 0
+        self.y = 2
+
+
+        self.generation = 0
+        self.chromosome_index = 0
+
     def predict(self, data):
         self.l1 = relu(np.matmul(data, self.w1) + self.b1)
-        print("a")
+        # print("a")
         # a = np.matmul(self.l1, self.w2) + self.b2
         # a = 1.0 / (1.0 + np.exp(max(-np.matmul(self.l1, self.w2) + self.b2, 0.0001)))
         # print(a)
         # print(sigmoid(a))
         output = sigmoid(np.matmul(self.l1, self.w2) + self.b2)
         result = (output > 0.5).astype(np.int)
-        print(result)
+        # print(result)
         return result
 
     def fitness(self):
@@ -55,6 +66,17 @@ class Chromosome:
 
     # 개체 통계값 초기화
     def clear(self):
+        self.cnt += 1
+
+        self.x = 0
+        self.y = self.start[self.cnt]
+        self.generation = self.cnt
+        print(f'파일: {self.generation}')
+
+        if self.cnt == 10:
+            time.sleep(10)
+            exit(0)
+
         self.distance = 0
         self.max_distance = 0
         self.frames = 0
@@ -70,10 +92,11 @@ class Chromosome:
 class Ventilation(QWidget):
     def __init__(self):
         super().__init__()
-        self.start = [2, 3, 8, 9, 10, 11, 12, 13, 14, 15, 16]
-        self.cnt = 0
-        self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
+
         sys.excepthook = except_hook
+
+        self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
+
         # self.env = retro.make(game='SuperMarioBros-Nes', state=f'Level1-1')
         # screen = self.env.reset()
 
@@ -95,9 +118,6 @@ class Ventilation(QWidget):
         #     if self.map[0][tmp] == 0:
         #         break
 
-        self.x = 0
-        self.y = 2
-
         # self.screen_label = QLabel(self)
         # self.screen_label.setGeometry(0, 0, self.screen_width, self.screen_height)
 
@@ -105,13 +125,11 @@ class Ventilation(QWidget):
         # self.info_label.setGeometry(self.screen_width + 320, self.screen_height - 70, 70, 70)
         # self.info_label.setText('?????세대\n?번 마리오\n???????')
 
-        self.generation = 0
-        self.chromosome_index = 0
         self.current_chromosome = Chromosome()
-        self.current_chromosome.w1 = np.load(f'../replay/{self.generation}/{self.chromosome_index}/w1.npy')
-        self.current_chromosome.b1 = np.load(f'../replay/{self.generation}/{self.chromosome_index}/b1.npy')
-        self.current_chromosome.w2 = np.load(f'../replay/{self.generation}/{self.chromosome_index}/w2.npy')
-        self.current_chromosome.b2 = np.load(f'../replay/{self.generation}/{self.chromosome_index}/b2.npy')
+        self.current_chromosome.w1 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/w1.npy')
+        self.current_chromosome.b1 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/b1.npy')
+        self.current_chromosome.w2 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/w2.npy')
+        self.current_chromosome.b2 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/b2.npy')
 
         self.game_timer = QTimer(self)
         self.game_timer.timeout.connect(self.update_game)
@@ -129,103 +147,103 @@ class Ventilation(QWidget):
                     # UDL
                     if press_buttons[3] == 1:
                         # UDLR
-                        self.map[self.x][self.y] = 2
+                        self.map[self.current_chromosome.x][self.current_chromosome.y] = 2
                     else:
-                        if self.x + 1 != 27 and self.map[self.x][self.y - 1] != 1 and self.x >= 0 and self.y >= 0:
-                            self.map[self.x][self.y - 1] = 2
+                        if self.current_chromosome.x + 1 != 27 and self.map[self.current_chromosome.x][self.current_chromosome.y - 1] != 1 and self.current_chromosome.x >= 0 and self.current_chromosome.y >= 0:
+                            self.map[self.current_chromosome.x][self.current_chromosome.y - 1] = 2
                             # self.map[self.x][self.y] = 0
-                            self.y = self.y - 1
+                            self.current_chromosome.y = self.current_chromosome.y - 1
                             self.current_chromosome.move += 1
                 elif press_buttons[3] == 1:
                     # UDR
-                    if self.x + 1 != 27 and self.map[self.x][self.y + 1] != 1 and self.x >= 0 and self.y >= 0:
-                        self.map[self.x][self.y + 1] = 2
+                    if self.current_chromosome.x + 1 != 27 and self.map[self.current_chromosome.x][self.current_chromosome.y + 1] != 1 and self.current_chromosome.x >= 0 and self.current_chromosome.y >= 0:
+                        self.map[self.current_chromosome.x][self.current_chromosome.y + 1] = 2
                         # self.map[self.x][self.y] = 0
-                        self.y = self.y + 1
+                        self.current_chromosome.y = self.current_chromosome.y + 1
                         self.current_chromosome.move += 1
                 else:
                     # UD
-                    self.map[self.x][self.y] = 2
+                    self.map[self.current_chromosome.x][self.current_chromosome.y] = 2
             elif press_buttons[2] == 1:
                 if press_buttons[3] == 1:
                     # ULR
-                    if self.x + 1 != 27 and self.map[self.x - 1][self.y] != 1 and self.x > 0 and self.y >= 0:
-                        self.map[self.x - 1][self.y] = 2
+                    if self.current_chromosome.x + 1 != 27 and self.map[self.current_chromosome.x - 1][self.current_chromosome.y] != 1 and self.current_chromosome.x > 0 and self.current_chromosome.y >= 0:
+                        self.map[self.current_chromosome.x - 1][self.current_chromosome.y] = 2
                         # self.map[self.x][self.y] = 0
-                        self.x = self.x - 1
+                        self.current_chromosome.x = self.current_chromosome.x - 1
                         self.current_chromosome.move += 1
                 else:
                     # UL
-                    if self.x + 1 != 27 and self.map[self.x - 1][self.y - 1] != 1 and self.x > 0 and self.y >= 0:
-                        self.map[self.x - 1][self.y - 1] = 2
+                    if self.current_chromosome.x + 1 != 27 and self.map[self.current_chromosome.x - 1][self.current_chromosome.y - 1] != 1 and self.current_chromosome.x > 0 and self.current_chromosome.y >= 0:
+                        self.map[self.current_chromosome.x - 1][self.current_chromosome.y - 1] = 2
                         # self.map[self.x][self.y] = 0
-                        self.x = self.x - 1
-                        self.y = self.y - 1
+                        self.current_chromosome.x = self.current_chromosome.x - 1
+                        self.current_chromosome.y = self.current_chromosome.y - 1
                         self.current_chromosome.move += 1
             elif press_buttons[3] == 1:
                 # UR
-                if self.x + 1 != 27 and self.map[self.x - 1][self.y + 1] != 1 and self.x > 0 and self.y >= 0:
-                    self.map[self.x - 1][self.y + 1] = 2
+                if self.current_chromosome.x + 1 != 27 and self.map[self.current_chromosome.x - 1][self.current_chromosome.y + 1] != 1 and self.current_chromosome.x > 0 and self.current_chromosome.y >= 0:
+                    self.map[self.current_chromosome.x - 1][self.current_chromosome.y + 1] = 2
                     # self.map[self.x][self.y] = 0
-                    self.x = self.x - 1
-                    self.y = self.y + 1
+                    self.current_chromosome.x = self.current_chromosome.x - 1
+                    self.current_chromosome.y = self.current_chromosome.y + 1
                     self.current_chromosome.move += 1
             else:
                 # U
-                if self.x + 1 != 27 and self.map[self.x - 1][self.y] != 1 and self.x > 0 and self.y >= 0:
-                    self.map[self.x - 1][self.y] = 2
+                if self.current_chromosome.x + 1 != 27 and self.map[self.current_chromosome.x - 1][self.current_chromosome.y] != 1 and self.current_chromosome.x > 0 and self.current_chromosome.y >= 0:
+                    self.map[self.current_chromosome.x - 1][self.current_chromosome.y] = 2
                     # self.map[self.x][self.y] = 0
-                    self.x = self.x - 1
+                    self.current_chromosome.x = self.current_chromosome.x - 1
                     self.current_chromosome.move += 1
         elif press_buttons[1] == 1:
             if press_buttons[2] == 1:
                 if press_buttons[3] == 1:
                     # DLR
-                    if self.x + 1 != 27 and self.map[self.x + 1][self.y] != 1 and self.x >= 0 and self.y >= 0:
-                        self.map[self.x + 1][self.y] = 2
+                    if self.current_chromosome.x + 1 != 27 and self.map[self.current_chromosome.x + 1][self.current_chromosome.y] != 1 and self.current_chromosome.x >= 0 and self.current_chromosome.y >= 0:
+                        self.map[self.current_chromosome.x + 1][self.current_chromosome.y] = 2
                         # self.map[self.x][self.y] = 0
-                        self.x = self.x + 1
+                        self.current_chromosome.x = self.current_chromosome.x + 1
                         self.current_chromosome.move += 1
                 else:
                     # DL
-                    if self.x + 1 != 27 and self.map[self.x + 1][self.y - 1] != 1 and self.x >= 0 and self.y >= 0:
-                        self.map[self.x + 1][self.y - 1] = 2
+                    if self.current_chromosome.x + 1 != 27 and self.map[self.current_chromosome.x + 1][self.current_chromosome.y - 1] != 1 and self.current_chromosome.x >= 0 and self.current_chromosome.y >= 0:
+                        self.map[self.current_chromosome.x + 1][self.current_chromosome.y - 1] = 2
                         # self.map[self.x][self.y] = 0
-                        self.x = self.x + 1
-                        self.y = self.y - 1
+                        self.current_chromosome.x = self.current_chromosome.x + 1
+                        self.current_chromosome.y = self.current_chromosome.y - 1
                         self.current_chromosome.move += 1
             elif press_buttons[3] == 1:
                 # DR
-                if self.x + 1 != 27 and self.map[self.x + 1][self.y + 1] != 1 and self.x >= 0 and self.y >= 0:
-                    self.map[self.x + 1][self.y + 1] = 2
+                if self.current_chromosome.x + 1 != 27 and self.map[self.current_chromosome.x + 1][self.current_chromosome.y + 1] != 1 and self.current_chromosome.x >= 0 and self.current_chromosome.y >= 0:
+                    self.map[self.current_chromosome.x + 1][self.current_chromosome.y + 1] = 2
                     # self.map[self.x][self.y] = 0
-                    self.x = self.x + 1
-                    self.y = self.y + 1
+                    self.current_chromosome.x = self.current_chromosome.x + 1
+                    self.current_chromosome.y = self.current_chromosome.y + 1
                     self.current_chromosome.move += 1
             else:
                 # D
-                if self.x + 1 != 27 and self.map[self.x + 1][self.y] != 1 and self.x >= 0 and self.y >= 0:
-                    self.map[self.x + 1][self.y] = 2
+                if self.current_chromosome.x + 1 != 27 and self.map[self.current_chromosome.x + 1][self.current_chromosome.y] != 1 and self.current_chromosome.x >= 0 and self.current_chromosome.y >= 0:
+                    self.map[self.current_chromosome.x + 1][self.current_chromosome.y] = 2
                     # self.map[self.x][self.y] = 0
-                    self.x = self.x + 1
+                    self.current_chromosome.x = self.current_chromosome.x + 1
                     self.current_chromosome.move += 1
         elif press_buttons[2] == 1:
             if press_buttons[3] == 1:
                 # LR
-                self.map[self.x][self.y] = 2
+                self.map[self.current_chromosome.x][self.current_chromosome.y] = 2
             else:
                 # L
-                if self.x + 1 != 27 and self.map[self.x][self.y - 1] != 1 and self.x >= 0 and self.y >= 0:
-                    self.map[self.x][self.y - 1] = 2
+                if self.current_chromosome.x + 1 != 27 and self.map[self.current_chromosome.x][self.current_chromosome.y - 1] != 1 and self.current_chromosome.x >= 0 and self.current_chromosome.y >= 0:
+                    self.map[self.current_chromosome.x][self.current_chromosome.y - 1] = 2
                     # self.map[self.x][self.y] = 0
-                    self.y = self.y - 1
+                    self.current_chromosome.y = self.current_chromosome.y - 1
                     self.current_chromosome.move += 1
         elif press_buttons[3] == 1:
             # R
-            if self.x + 1 != 27 and self.map[self.x][self.y + 1] != 1 and self.x >= 0 and self.y >= 0:
-                self.map[self.x][self.y + 1] = 2
+            if self.current_chromosome.x + 1 != 27 and self.map[self.current_chromosome.x][self.current_chromosome.y + 1] != 1 and self.current_chromosome.x >= 0 and self.current_chromosome.y >= 0:
+                self.map[self.current_chromosome.x][self.current_chromosome.y + 1] = 2
                 # self.map[self.x][self.y] = 0
-                self.y = self.y + 1
+                self.current_chromosome.y = self.current_chromosome.y + 1
                 self.current_chromosome.move += 1
         # print(self.x, self.y)
 
@@ -349,7 +367,7 @@ class Ventilation(QWidget):
         input_data = input_data.flatten()
         self.current_chromosome.frames += 1
         # self.current_chromosome.distance = ram[0x006D] * 256 + ram[0x0086]
-        self.current_chromosome.distance = self.x
+        self.current_chromosome.distance = self.current_chromosome.x
         for i in range(2):
             if self.map[26][i + 3] == 2:
                 self.current_chromosome.win1 = 1
@@ -392,24 +410,13 @@ class Ventilation(QWidget):
             #     tmp = np.random.randint(0, 18)
             #     if self.map[0][tmp] == 0:
             #         break
-            self.cnt += 1
-
-            self.x = 0
-            self.y = self.start[cnt]
-            self.generation = cnt
-            # if self.cnt == 2:
-            #     exit(0)
 
         else:
-            print(1)
             predict = self.current_chromosome.predict(input_data)
-            print(2)
             # press_buttons = np.array([predict[5], 0, 0, 0, predict[0], predict[1], predict[2], predict[3], predict[4]])
             # self.env.step(press_buttons)
             press_buttons = np.array([predict[0], predict[1], predict[2], predict[3]])
-            print(3)
             self.step(press_buttons)
-            print(4)
 
             # for i in range(predict.shape[0]):
             #     if predict[i] == 1:
