@@ -10,6 +10,8 @@ import numpy as np
 import random
 import os
 
+import time
+
 relu = lambda x: np.maximum(0, x)
 sigmoid = lambda x: 1.0 / (1.0 + np.exp(-x))
 
@@ -198,7 +200,7 @@ class Ventilation(QWidget):
         #         break
 
         self.x = 0
-        self.y = 8
+        self.y = 11
 
         self.ga = GeneticAlgorithm()
 
@@ -327,116 +329,6 @@ class Ventilation(QWidget):
                 current_chromosome.move += 1
         # print(self.x, self.y)
 
-    # def step(self, press_buttons):
-    #     current_chromosome = self.ga.chromosomes[self.ga.current_chromosome_index]
-    #     # U, D, L, R
-    #     # map[세로][가로]
-    #     if press_buttons[0] == 1:
-    #         if press_buttons[1] == 1:
-    #             if press_buttons[2] == 1:
-    #                 # UDL
-    #                 if press_buttons[3] == 1:
-    #                     # UDLR
-    #                     self.map[self.x][self.y] = 2
-    #                 else:
-    #                     if self.x + 1 != 27 and self.map[self.x][self.y - 1] == 0 and self.x >= 0 and self.x <= 26 and self.y >= 0 and self.y <= 26:
-    #                         self.map[self.x][self.y - 1] = 2
-    #                         self.map[self.x][self.y] = 0
-    #                         self.y = self.y - 1
-    #                         current_chromosome.move += 1
-    #             elif press_buttons[3] == 1:
-    #                 # UDR
-    #                 if self.x + 1 != 27 and self.map[self.x][self.y + 1] == 0 and self.x >= 0 and self.x <= 26 and self.y >= 0 and self.y <= 26:
-    #                     self.map[self.x][self.y + 1] = 2
-    #                     self.map[self.x][self.y] = 0
-    #                     self.y = self.y + 1
-    #                     current_chromosome.move += 1
-    #             else:
-    #                 # UD
-    #                 if self.x + 1 != 27 and self.map[self.x][self.y + 1] == 0 and self.x >= 0 and self.x <= 26 and self.y >= 0 and self.y <= 26:
-    #                     self.map[self.x][self.y + 1] = 2
-    #                     self.map[self.x][self.y] = 0
-    #                     self.y = self.y + 1
-    #                     current_chromosome.move += 1
-    #         elif press_buttons[2] == 1:
-    #             if press_buttons[3] == 1:
-    #                 # ULR
-    #                 if self.x + 1 != 27 and self.map[self.x - 1][self.y] == 0 and self.x >= 0 and self.x <= 26 and self.y >= 0 and self.y <= 26:
-    #                     self.map[self.x - 1][self.y] = 2
-    #                     self.map[self.x][self.y] = 0
-    #                     self.x = self.x - 1
-    #                     current_chromosome.move += 1
-    #             else:
-    #                 # UL
-    #                 if self.x + 1 != 27 and self.map[self.x][self.y - 1] == 0 and self.x >= 0 and self.x <= 26 and self.y >= 0 and self.y <= 26:
-    #                     self.map[self.x][self.y - 1] = 2
-    #                     self.map[self.x][self.y] = 0
-    #                     self.y = self.y - 1
-    #                     current_chromosome.move += 1
-    #         elif press_buttons[3] == 1:
-    #             # UR
-    #             if self.x + 1 != 27 and self.map[self.x][self.y + 1] == 0 and self.x >= 0 and self.x <= 26 and self.y >= 0 and self.y <= 26:
-    #                 self.map[self.x][self.y + 1] = 2
-    #                 self.map[self.x][self.y] = 0
-    #                 self.y = self.y + 1
-    #                 current_chromosome.move += 1
-    #         else:
-    #             # U
-    #             if self.x + 1 != 27 and self.map[self.x - 1][self.y] == 0 and self.x >= 0 and self.x <= 26 and self.y >= 0 and self.y <= 26:
-    #                 self.map[self.x - 1][self.y] = 2
-    #                 self.map[self.x][self.y] = 0
-    #                 self.x = self.x - 1
-    #                 current_chromosome.move += 1
-    #     elif press_buttons[1] == 1:
-    #         if press_buttons[2] == 1:
-    #             if press_buttons[3] == 1:
-    #                 # DLR
-    #                 if self.x + 1 != 27 and self.map[self.x + 1][self.y] == 0 and self.x >= 0 and self.x <= 26 and self.y >= 0 and self.y <= 26:
-    #                     self.map[self.x + 1][self.y] = 2
-    #                     self.map[self.x][self.y] = 0
-    #                     self.x = self.x + 1
-    #                     current_chromosome.move += 1
-    #             else:
-    #                 # DL
-    #                 if self.x + 1 != 27 and self.map[self.x][self.y - 1] == 0 and self.x >= 0 and self.x <= 26 and self.y >= 0 and self.y <= 26:
-    #                     self.map[self.x][self.y - 1] = 2
-    #                     self.map[self.x][self.y] = 0
-    #                     self.y = self.y - 1
-    #                     current_chromosome.move += 1
-    #         elif press_buttons[3] == 1:
-    #             # DR
-    #             if self.x + 1 != 27 and self.map[self.x][self.y + 1] == 0 and self.x >= 0 and self.x <= 26 and self.y >= 0 and self.y <= 26:
-    #                 self.map[self.x][self.y + 1] = 2
-    #                 self.map[self.x][self.y] = 0
-    #                 self.y = self.y + 1
-    #                 current_chromosome.move += 1
-    #         else:
-    #             # D
-    #             if self.x + 1 != 27 and self.map[self.x + 1][self.y] == 0 and self.x >= 0 and self.x <= 26 and self.y >= 0 and self.y <= 26:
-    #                 self.map[self.x + 1][self.y] = 2
-    #                 self.map[self.x][self.y] = 0
-    #                 self.x = self.x + 1
-    #                 current_chromosome.move += 1
-    #     elif press_buttons[2] == 1:
-    #         if press_buttons[3] == 1:
-    #             # LR
-    #             self.map[self.x][self.y] = 2
-    #         else:
-    #             # L
-    #             if self.x + 1 != 27 and self.map[self.x][self.y - 1] == 0 and self.x >= 0 and self.x <= 26 and self.y >= 0 and self.y <= 26:
-    #                 self.map[self.x][self.y - 1] = 2
-    #                 self.map[self.x][self.y] = 0
-    #                 self.y = self.y - 1
-    #                 current_chromosome.move += 1
-    #     elif press_buttons[3] == 1:
-    #         # R
-    #         if self.x + 1 != 27 and self.map[self.x][self.y + 1] == 0 and self.x >= 0 and self.x <= 26 and self.y >= 0 and self.y <= 26:
-    #             self.map[self.x][self.y + 1] = 2
-    #             self.map[self.x][self.y] = 0
-    #             self.y = self.y + 1
-    #             current_chromosome.move += 1
-    #     # print(self.x, self.y)
-
     def paintEvent(self, event):
         painter = QPainter()
         painter.begin(self)
@@ -562,10 +454,10 @@ class Ventilation(QWidget):
         #     if self.map[i + 10][0] == 2:
         #         current_chromosome.win1 = 1
         #         break
-        for i in range(2):
-            if self.map[26][i + 3] == 2:
-                current_chromosome.win1 = 1
-                break
+        # for i in range(2):
+        #     if self.map[26][i + 3] == 2:
+        #         current_chromosome.win1 = 1
+        #         break
         for i in range(6):
             for j in range(4):
                 if self.map[i + 16][j + 6] == 2:
@@ -616,6 +508,9 @@ class Ventilation(QWidget):
             elif current_chromosome.win1 == 1 or current_chromosome.win5 == 1:
                 self.ga.next_generation()
                 print(f'== {self.ga.generation} 세대 ==')
+
+                print("완료")
+                time.sleep(10)
                 exit()
 
             # self.env.reset()
@@ -625,7 +520,7 @@ class Ventilation(QWidget):
             #     if self.map[0][tmp] == 0:
             #         break
             self.x = 0
-            self.y = 8
+            self.y = 11
         else:
             predict = current_chromosome.predict(input_data)
             press_buttons = np.array([predict[0], predict[1], predict[2], predict[3]])

@@ -1,4 +1,5 @@
 # 04. mario_replay.py
+# replay 폴더 내 유전자 각각의 10개의 세대를 보기 위함
 import retro
 from PyQt5.QtGui import QImage, QPixmap, QPainter, QPen, QBrush, QColor
 from PyQt5.QtCore import Qt, QTimer
