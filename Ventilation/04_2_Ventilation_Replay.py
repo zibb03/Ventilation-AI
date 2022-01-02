@@ -24,7 +24,7 @@ class Chromosome:
         self.w2 = np.random.uniform(low=-1, high=1, size=(48, 4))
         self.b2 = np.random.uniform(low=-1, high=1, size=(4,))
 
-        self.start = [2, 3, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        # self.start = [2, 3, 8, 9, 10, 11, 12, 13, 14, 15, 16]
         self.cnt = 0
 
         self.distance = 0
@@ -39,10 +39,10 @@ class Chromosome:
         self.win5 = 0
 
         self.x = 0
-        self.y = 2
+        self.y = 11
         # self.y = 11
 
-        self.generation = 0
+        self.generation = 5
         self.chromosome_index = 0
 
     def predict(self, data):
@@ -70,15 +70,23 @@ class Chromosome:
         self.cnt += 1
 
         self.x = 0
-        self.y = self.start[self.cnt]
-        # self.y = 11
-        self.generation = self.cnt
-        # self.generation = 123
-        print(f'파일: {self.generation}')
+        # self.y = self.start[self.cnt]
+        self.y = 11
+        # self.generation = self.cnt
+        self.chromosome_index = self.cnt
+        print(f'번호: {self.chromosome_index}')
 
-        if self.cnt == 5:
+        if self.cnt == 9:
             time.sleep(10)
             exit(0)
+
+        self.current_chromosome = Chromosome()
+        self.current_chromosome.w1 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/w1.npy')
+        self.current_chromosome.b1 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/b1.npy')
+        self.current_chromosome.w2 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/w2.npy')
+        self.current_chromosome.b2 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/b2.npy')
+        print("load", self.chromosome_index)
+
 
         self.distance = 0
         self.max_distance = 0
@@ -133,6 +141,7 @@ class Ventilation(QWidget):
         self.current_chromosome.b1 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/b1.npy')
         self.current_chromosome.w2 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/w2.npy')
         self.current_chromosome.b2 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/b2.npy')
+        print("load")
 
         self.game_timer = QTimer(self)
         self.game_timer.timeout.connect(self.update_game)
@@ -406,6 +415,7 @@ class Ventilation(QWidget):
 
             print(f'적합도: {self.current_chromosome.fitness()}')
 
+            self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
             self.current_chromosome.clear()
             # self.env.reset()
             # self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
