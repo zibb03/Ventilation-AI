@@ -23,7 +23,8 @@ class Chromosome:
         self.w2 = np.random.uniform(low=-1, high=1, size=(48, 4))
         self.b2 = np.random.uniform(low=-1, high=1, size=(4,))
 
-        self.start = [2, 3, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        self.start = [2, 3, 8, 9, 10, 11,
+                      12, 13, 14, 15, 16]
         self.cnt = 0
 
         self.distance = 0
@@ -75,7 +76,7 @@ class Chromosome:
         # self.generation = 123
         print(f'파일: {self.generation}')
 
-        if self.cnt == 5:
+        if self.cnt == 10:
             time.sleep(10)
             exit(0)
 
@@ -151,14 +152,16 @@ class Ventilation(QWidget):
                         # UDLR
                         self.map[self.current_chromosome.x][self.current_chromosome.y] = 2
                     else:
-                        if self.current_chromosome.x + 1 != 27 and self.map[self.current_chromosome.x][self.current_chromosome.y - 1] != 1 and self.current_chromosome.x >= 0 and self.current_chromosome.y >= 0:
+                        if self.current_chromosome.x + 1 != 27 and self.map[self.current_chromosome.x][self.current_chromosome.y - 1] != 1 and \
+                                self.current_chromosome.x >= 0 and self.current_chromosome.y >= 0:
                             self.map[self.current_chromosome.x][self.current_chromosome.y - 1] = 2
                             # self.map[self.x][self.y] = 0
                             self.current_chromosome.y = self.current_chromosome.y - 1
                             self.current_chromosome.move += 1
                 elif press_buttons[3] == 1:
                     # UDR
-                    if self.current_chromosome.x + 1 != 27 and self.map[self.current_chromosome.x][self.current_chromosome.y + 1] != 1 and self.current_chromosome.x >= 0 and self.current_chromosome.y >= 0:
+                    if self.current_chromosome.x + 1 != 27 and self.map[self.current_chromosome.x][self.current_chromosome.y + 1] != 1 and \
+                            self.current_chromosome.x >= 0 and self.current_chromosome.y >= 0:
                         self.map[self.current_chromosome.x][self.current_chromosome.y + 1] = 2
                         # self.map[self.x][self.y] = 0
                         self.current_chromosome.y = self.current_chromosome.y + 1
@@ -406,6 +409,7 @@ class Ventilation(QWidget):
             print(f'적합도: {self.current_chromosome.fitness()}')
 
             self.current_chromosome.clear()
+            self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
             # self.env.reset()
             # self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
             # while True:

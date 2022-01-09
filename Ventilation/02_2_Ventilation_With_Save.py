@@ -498,7 +498,7 @@ class Ventilation(QWidget):
         #         current_chromosome.win = 1
 
         if current_chromosome.stop_frames > 5 or current_chromosome.win1 == 1 or current_chromosome.win5 == 1:
-            print(f'{self.ga.current_chromosome_index + 1}번 마리오: {current_chromosome.fitness()}')
+            print(f'{self.ga.current_chromosome_index + 1}번 : {current_chromosome.fitness()}')
 
             self.ga.current_chromosome_index += 1
             # print(current_chromosome.frames)
