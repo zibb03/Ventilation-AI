@@ -10,13 +10,19 @@ import random
 import os
 import time
 
+import Web_Crawler
+
 relu = lambda X: np.maximum(0, X)
 sigmoid = lambda x: 1.0 / (1.0 + np.exp(-x))
 
 def except_hook(cls, exception, traceback):
     sys.__excepthook__(cls, exception, traceback)
 
+cnt = 0
+generation = 5
+
 class Chromosome:
+    global generation
     def __init__(self):
         self.w1 = np.random.uniform(low=-1, high=1, size=(486, 48))
         self.b1 = np.random.uniform(low=-1, high=1, size=(48,))
@@ -24,8 +30,8 @@ class Chromosome:
         self.w2 = np.random.uniform(low=-1, high=1, size=(48, 4))
         self.b2 = np.random.uniform(low=-1, high=1, size=(4,))
 
-        # self.start = [2, 3, 8, 9, 10, 11, 12, 13, 14, 15, 16]
-        self.cnt = 0
+        self.start = [2, 3, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+        # self.cnt = 0
 
         self.distance = 0
         self.max_distance = 0
@@ -42,7 +48,7 @@ class Chromosome:
         self.y = 11
         # self.y = 11
 
-        self.generation = 5
+        generation = 5
         self.chromosome_index = 0
 
     def predict(self, data):
@@ -67,25 +73,34 @@ class Chromosome:
 
     # 개체 통계값 초기화
     def clear(self):
-        self.cnt += 1
+        global cnt
+        # global generation
+
+        cnt += 1
 
         self.x = 0
         # self.y = self.start[self.cnt]
         self.y = 11
-        # self.generation = self.cnt
-        self.chromosome_index = self.cnt
-        print(f'번호: {self.chromosome_index}')
+        # generation = self.cnt
 
-        if self.cnt == 9:
+        # print(f'번호: {self.chromosome_index}')
+        # print(weather)
+
+        if cnt == 9:
             time.sleep(10)
             exit(0)
 
         self.current_chromosome = Chromosome()
-        self.current_chromosome.w1 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/w1.npy')
-        self.current_chromosome.b1 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/b1.npy')
-        self.current_chromosome.w2 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/w2.npy')
-        self.current_chromosome.b2 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/b2.npy')
-        print("load", self.chromosome_index)
+        generation = cnt
+        # print(cnt, generation, self.current_chromosome.chromosome_index)
+
+        self.current_chromosome.w1 = np.load(f'../replay/{generation}/{self.current_chromosome.chromosome_index}/w1.npy')
+        self.current_chromosome.b1 = np.load(f'../replay/{generation}/{self.current_chromosome.chromosome_index}/b1.npy')
+        self.current_chromosome.w2 = np.load(f'../replay/{generation}/{self.current_chromosome.chromosome_index}/w2.npy')
+        self.current_chromosome.b2 = np.load(f'../replay/{generation}/{self.current_chromosome.chromosome_index}/b2.npy')
+        # print("load", self.current_chromosome.w1, self.current_chromosome.b1, self.current_chromosome.w2, self.current_chromosome.b2)
+        print(generation)
+        print(self.current_chromosome.w1)
 
 
         self.distance = 0
@@ -101,6 +116,8 @@ class Chromosome:
 
 
 class Ventilation(QWidget):
+    global generation
+
     def __init__(self):
         super().__init__()
 
@@ -137,11 +154,12 @@ class Ventilation(QWidget):
         # self.info_label.setText('?????세대\n?번 마리오\n???????')
 
         self.current_chromosome = Chromosome()
-        self.current_chromosome.w1 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/w1.npy')
-        self.current_chromosome.b1 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/b1.npy')
-        self.current_chromosome.w2 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/w2.npy')
-        self.current_chromosome.b2 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/b2.npy')
-        print("load")
+        self.current_chromosome.w1 = np.load(f'../replay/{generation}/{self.current_chromosome.chromosome_index}/w1.npy')
+        self.current_chromosome.b1 = np.load(f'../replay/{generation}/{self.current_chromosome.chromosome_index}/b1.npy')
+        self.current_chromosome.w2 = np.load(f'../replay/{generation}/{self.current_chromosome.chromosome_index}/w2.npy')
+        self.current_chromosome.b2 = np.load(f'../replay/{generation}/{self.current_chromosome.chromosome_index}/b2.npy')
+        # print("load")
+
 
         self.game_timer = QTimer(self)
         self.game_timer.timeout.connect(self.update_game)
@@ -269,7 +287,7 @@ class Ventilation(QWidget):
     def update_game(self):
         # self.update_screen()
         self.update()
-        # self.info_label.setText(f'{self.generation}세대\n{self.chromosome_index}번 마리오\n{self.current_chromosome.fitness()}')
+        # self.info_label.setText(f'{generation}세대\n{self.chromosome_index}번 마리오\n{self.current_chromosome.fitness()}')
 
     def paintEvent(self, e):
 
@@ -413,7 +431,7 @@ class Ventilation(QWidget):
             # if ram[0x001D] == 3:
             #     self.current_chromosome.win = 1
 
-            print(f'적합도: {self.current_chromosome.fitness()}')
+            # print(f'적합도: {self.current_chromosome.fitness()}')
 
             self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
             self.current_chromosome.clear()

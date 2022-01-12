@@ -1,3 +1,5 @@
+# replay 스크립트 기능 완성본
+# UI 및 통신 적용 필요
 # x -> 세로, y -> 가로
 
 import retro
@@ -20,21 +22,78 @@ def except_hook(cls, exception, traceback):
 
 main_map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
 
-cnt = 0
+# cnt = 0
 x = 0
 y = 2
 generation = 0
 chromosome_index = 0
-
 start = [2, 3, 8, 9, 10, 11, 12, 13, 14, 15]
+weather = Web_Crawler.start()
+
+w1 = [np.random.uniform(low=-1, high=1, size=(486, 48)), np.random.uniform(low=-1, high=1, size=(486, 48)),
+           np.random.uniform(low=-1, high=1, size=(486, 48)),
+           np.random.uniform(low=-1, high=1, size=(486, 48)), np.random.uniform(low=-1, high=1, size=(486, 48)),
+           np.random.uniform(low=-1, high=1, size=(486, 48)),
+           np.random.uniform(low=-1, high=1, size=(486, 48)), np.random.uniform(low=-1, high=1, size=(486, 48)),
+           np.random.uniform(low=-1, high=1, size=(486, 48)),
+           np.random.uniform(low=-1, high=1, size=(486, 48))]
+b1 = [np.random.uniform(low=-1, high=1, size=(48,)), np.random.uniform(low=-1, high=1, size=(48,)),
+           np.random.uniform(low=-1, high=1, size=(48,)),
+           np.random.uniform(low=-1, high=1, size=(48,)), np.random.uniform(low=-1, high=1, size=(48,)),
+           np.random.uniform(low=-1, high=1, size=(48,)),
+           np.random.uniform(low=-1, high=1, size=(48,)), np.random.uniform(low=-1, high=1, size=(48,)),
+           np.random.uniform(low=-1, high=1, size=(48,)),
+           np.random.uniform(low=-1, high=1, size=(48,))]
+
+w2 = [np.random.uniform(low=-1, high=1, size=(48, 4)), np.random.uniform(low=-1, high=1, size=(48, 4)),
+           np.random.uniform(low=-1, high=1, size=(48, 4)),
+           np.random.uniform(low=-1, high=1, size=(48, 4)), np.random.uniform(low=-1, high=1, size=(48, 4)),
+           np.random.uniform(low=-1, high=1, size=(48, 4)),
+           np.random.uniform(low=-1, high=1, size=(48, 4)), np.random.uniform(low=-1, high=1, size=(48, 4)),
+           np.random.uniform(low=-1, high=1, size=(48, 4)),
+           np.random.uniform(low=-1, high=1, size=(48, 4))]
+b2 = [np.random.uniform(low=-1, high=1, size=(4,)), np.random.uniform(low=-1, high=1, size=(4,)),
+           np.random.uniform(low=-1, high=1, size=(4,)),
+           np.random.uniform(low=-1, high=1, size=(4,)), np.random.uniform(low=-1, high=1, size=(4,)),
+           np.random.uniform(low=-1, high=1, size=(4,)),
+           np.random.uniform(low=-1, high=1, size=(4,)), np.random.uniform(low=-1, high=1, size=(4,)),
+           np.random.uniform(low=-1, high=1, size=(4,)),
+           np.random.uniform(low=-1, high=1, size=(4,))]
 
 class Chromosome:
-    def __init__(self):
-        self.w1 = np.random.uniform(low=-1, high=1, size=(486, 48))
-        self.b1 = np.random.uniform(low=-1, high=1, size=(48,))
+    global generation
+    global chromosome_index
 
-        self.w2 = np.random.uniform(low=-1, high=1, size=(48, 4))
-        self.b2 = np.random.uniform(low=-1, high=1, size=(4,))
+    def __init__(self):
+        # print(generation)
+        # self.w1 = np.load(f'../replay/{generation}/{chromosome_index}/w1.npy')
+        # self.b1 = np.load(f'../replay/{generation}/{chromosome_index}/b1.npy')
+        # self.w2 = np.load(f'../replay/{generation}/{chromosome_index}/w2.npy')
+        # self.b2 = np.load(f'../replay/{generation}/{chromosome_index}/b2.npy')
+
+        # print(self.w1)
+
+        # self.w1 = [np.random.uniform(low=-1, high=1, size=(486, 48)), np.random.uniform(low=-1, high=1, size=(486, 48)), np.random.uniform(low=-1, high=1, size=(486, 48)),
+        #            np.random.uniform(low=-1, high=1, size=(486, 48)), np.random.uniform(low=-1, high=1, size=(486, 48)), np.random.uniform(low=-1, high=1, size=(486, 48)),
+        #            np.random.uniform(low=-1, high=1, size=(486, 48)), np.random.uniform(low=-1, high=1, size=(486, 48)), np.random.uniform(low=-1, high=1, size=(486, 48)),
+        #            np.random.uniform(low=-1, high=1, size=(486, 48))]
+        # # self.w1 = np.random.uniform(low=-1, high=1, size=(486, 48))
+        # self.b1 = [np.random.uniform(low=-1, high=1, size=(48,)), np.random.uniform(low=-1, high=1, size=(48,)), np.random.uniform(low=-1, high=1, size=(48,)),
+        #            np.random.uniform(low=-1, high=1, size=(48,)), np.random.uniform(low=-1, high=1, size=(48,)), np.random.uniform(low=-1, high=1, size=(48,)),
+        #            np.random.uniform(low=-1, high=1, size=(48,)), np.random.uniform(low=-1, high=1, size=(48,)), np.random.uniform(low=-1, high=1, size=(48,)),
+        #            np.random.uniform(low=-1, high=1, size=(48,))]
+        # # self.b1 = np.random.uniform(low=-1, high=1, size=(48,))
+        #
+        # self.w2 = [np.random.uniform(low=-1, high=1, size=(48, 4)), np.random.uniform(low=-1, high=1, size=(48, 4)), np.random.uniform(low=-1, high=1, size=(48, 4)),
+        #            np.random.uniform(low=-1, high=1, size=(48, 4)), np.random.uniform(low=-1, high=1, size=(48, 4)), np.random.uniform(low=-1, high=1, size=(48, 4)),
+        #            np.random.uniform(low=-1, high=1, size=(48, 4)), np.random.uniform(low=-1, high=1, size=(48, 4)), np.random.uniform(low=-1, high=1, size=(48, 4)),
+        #            np.random.uniform(low=-1, high=1, size=(48, 4))]
+        # # self.w2 = np.random.uniform(low=-1, high=1, size=(48, 4))
+        # self.b2 = [np.random.uniform(low=-1, high=1, size=(4,)), np.random.uniform(low=-1, high=1, size=(4,)), np.random.uniform(low=-1, high=1, size=(4,)),
+        #            np.random.uniform(low=-1, high=1, size=(4,)), np.random.uniform(low=-1, high=1, size=(4,)), np.random.uniform(low=-1, high=1, size=(4,)),
+        #            np.random.uniform(low=-1, high=1, size=(4,)), np.random.uniform(low=-1, high=1, size=(4,)), np.random.uniform(low=-1, high=1, size=(4,)),
+        #            np.random.uniform(low=-1, high=1, size=(4,))]
+        # # self.b2 = np.random.uniform(low=-1, high=1, size=(4,))
 
         # self.start = [2, 3, 8, 9, 10, 11, 12, 13, 14, 15, 16]
 
@@ -56,12 +115,22 @@ class Chromosome:
         # self.chromosome_index = 0
 
     def predict(self, data):
-        self.l1 = relu(np.matmul(data, self.w1) + self.b1)
+        global w1
+        global b1
+        global w2
+        global b2
+
+        global generation
+
+        # self.l1 = relu(np.matmul(data, self.w1) + self.b1)
+        # print(data)
+        self.l1 = relu(np.matmul(data, w1[generation]) + b1[generation])
         # a = np.matmul(self.l1, self.w2) + self.b2
         # a = 1.0 / (1.0 + np.exp(max(-np.matmul(self.l1, self.w2) + self.b2, 0.0001)))
         # print(a)
         # print(sigmoid(a))
-        output = sigmoid(np.matmul(self.l1, self.w2) + self.b2)
+        # output = sigmoid(np.matmul(self.l1, self.w2) + self.b2)
+        output = sigmoid(np.matmul(self.l1, w2[generation]) + b2[generation])
         result = (output > 0.5).astype(np.int)
         # print(result)
         return result
@@ -78,45 +147,31 @@ class Chromosome:
     def clear(self):
         time.sleep(3)
 
-        global cnt
         global x
         global y
         global generation
         global chromosome_index
 
-        cnt += 1
+        generation += 1
 
-        if cnt == 9:
+        if generation == 10:
             time.sleep(5)
             exit(0)
 
         self.current_chromosome = Chromosome()
         # self.current_chromosome.generation = cnt
-        generation = cnt
+        # generation = cnt
 
         # self.x = 0
         # self.y = self.start[cnt]
         x = 0
-        y = start[cnt]
+        y = start[generation]
         # y = self.start[cnt]
-        # print(y, self.start[cnt])
-        # print(f'파일: {self.generation}')
 
         # self.current_chromosome.w1 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/w1.npy')
         # self.current_chromosome.b1 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/b1.npy')
         # self.current_chromosome.w2 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/w2.npy')
         # self.current_chromosome.b2 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/b2.npy')
-        self.current_chromosome.w1 = np.load(f'../replay/{generation}/{chromosome_index}/w1.npy')
-        self.current_chromosome.b1 = np.load(f'../replay/{generation}/{chromosome_index}/b1.npy')
-        self.current_chromosome.w2 = np.load(f'../replay/{generation}/{chromosome_index}/w2.npy')
-        self.current_chromosome.b2 = np.load(f'../replay/{generation}/{chromosome_index}/b2.npy')
-
-        # print(self.y, y, cnt, self.current_chromosome.generation, self.generation)
-        # print("load", self.current_chromosome.w1, self.current_chromosome.b1, self.current_chromosome.w2, self.current_chromosome.b2)
-        # print(x, y, self.current_chromosome.generation)
-        # print(self.x, self.y, self.current_chromosome.generation)
-
-        # print(x, y, generation)
 
         self.distance = 0
         self.max_distance = 0
@@ -137,8 +192,16 @@ class Ventilation(QWidget):
 
         sys.excepthook = except_hook
 
+        global x
+        global y
         global generation
         global chromosome_index
+        global start
+
+        # global w1
+        # global b1
+        # global w2
+        # global b2
 
         self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
 
@@ -161,7 +224,7 @@ class Ventilation(QWidget):
 
         # while True:
         #     tmp = np.random.randint(0, 18)
-        #     if self.map[0][tmp] == 0:
+        #     if self.map[0][tmp] ==
         #         break
 
         # self.screen_label = QLabel(self)
@@ -171,16 +234,25 @@ class Ventilation(QWidget):
         self.info_label.setGeometry(288 + 10 + 200, 432 + 10 - 70, 70, 70)
         self.info_label.setText('?????세대\n?번 \n???????')
 
-        self.current_chromosome = Chromosome()
         # self.current_chromosome.w1 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/w1.npy')
         # self.current_chromosome.b1 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/b1.npy')
         # self.current_chromosome.w2 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/w2.npy')
         # self.current_chromosome.b2 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/b2.npy')
-        self.current_chromosome.w1 = np.load(f'../replay/{generation}/{chromosome_index}/w1.npy')
-        self.current_chromosome.b1 = np.load(f'../replay/{generation}/{chromosome_index}/b1.npy')
-        self.current_chromosome.w2 = np.load(f'../replay/{generation}/{chromosome_index}/w2.npy')
-        self.current_chromosome.b2 = np.load(f'../replay/{generation}/{chromosome_index}/b2.npy')
-        # print(self.y, self.current_chromosome.generation)
+
+        self.current_chromosome = Chromosome()
+
+        for i in range(10):
+            # print(1)
+            # self.current_chromosome.w1[i] = np.load(f'../replay/{i}/{chromosome_index}/w1.npy')
+            # self.current_chromosome.b1[i] = np.load(f'../replay/{i}/{chromosome_index}/b1.npy')
+            # self.current_chromosome.w2[i] = np.load(f'../replay/{i}/{chromosome_index}/w2.npy')
+            # self.current_chromosome.b2[i] = np.load(f'../replay/{i}/{chromosome_index}/b2.npy')
+            w1[i] = np.load(f'../replay/{i}/{chromosome_index}/w1.npy')
+            b1[i] = np.load(f'../replay/{i}/{chromosome_index}/b1.npy')
+            w2[i] = np.load(f'../replay/{i}/{chromosome_index}/w2.npy')
+            b2[i] = np.load(f'../replay/{i}/{chromosome_index}/b2.npy')
+
+        print(x, y, generation)
 
         self.game_timer = QTimer(self)
         self.game_timer.timeout.connect(self.update_game)
@@ -188,125 +260,13 @@ class Ventilation(QWidget):
 
         self.show()
 
-    # def step(self, press_buttons):
-    #     # current_chromosome = self.ga.chromosomes[self.ga.current_chromosome_index]
-    #     # U, D, L, R
-    #     # map[세로][가로]
-    #
-    #     if press_buttons[0] == 1:
-    #         if press_buttons[1] == 1:
-    #             if press_buttons[2] == 1:
-    #                 # UDL
-    #                 if press_buttons[3] == 1:
-    #                     # UDLR
-    #                     self.map[x][y] = 2
-    #                 else:
-    #                     if x + 1 != 27 and self.map[x][y - 1] != 1 and \
-    #                             x >= 0 and y >= 0:
-    #                         self.map[x][y - 1] = 2
-    #                         # self.map[self.x][self.y] = 0
-    #                         y = y - 1
-    #                         self.current_chromosome.move += 1
-    #             elif press_buttons[3] == 1:
-    #                 # UDR
-    #                 if x + 1 != 27 and self.map[x][y + 1] != 1 and \
-    #                         x >= 0 and y >= 0:
-    #                     self.map[x][y + 1] = 2
-    #                     # self.map[self.x][self.y] = 0
-    #                     y = y + 1
-    #                     self.current_chromosome.move += 1
-    #             else:
-    #                 # UD
-    #                 self.map[x][y] = 2
-    #         elif press_buttons[2] == 1:
-    #             if press_buttons[3] == 1:
-    #                 # ULR
-    #                 if x + 1 != 27 and self.map[x - 1][y] != 1 and x > 0 and y >= 0:
-    #                     self.map[x - 1][y] = 2
-    #                     # self.map[self.x][self.y] = 0
-    #                     x = x - 1
-    #                     self.current_chromosome.move += 1
-    #             else:
-    #                 # UL
-    #                 if x + 1 != 27 and self.map[x - 1][y - 1] != 1 and x > 0 and y >= 0:
-    #                     self.map[x - 1][y - 1] = 2
-    #                     # self.map[self.x][self.y] = 0
-    #                     x = x - 1
-    #                     y = y - 1
-    #                     self.current_chromosome.move += 1
-    #         elif press_buttons[3] == 1:
-    #             # UR
-    #             if x + 1 != 27 and self.map[x - 1][y + 1] != 1 and x > 0 and y >= 0:
-    #                 self.map[x - 1][y + 1] = 2
-    #                 # self.map[self.x][self.y] = 0
-    #                 x = x - 1
-    #                 y = y + 1
-    #                 self.current_chromosome.move += 1
-    #         else:
-    #             # U
-    #             if x + 1 != 27 and self.map[x - 1][y] != 1 and x > 0 and y >= 0:
-    #                 self.map[x - 1][y] = 2
-    #                 # self.map[self.x][self.y] = 0
-    #                 x = x - 1
-    #                 self.current_chromosome.move += 1
-    #     elif press_buttons[1] == 1:
-    #         if press_buttons[2] == 1:
-    #             if press_buttons[3] == 1:
-    #                 # DLR
-    #                 if x + 1 != 27 and self.map[x + 1][y] != 1 and x >= 0 and y >= 0:
-    #                     self.map[x + 1][y] = 2
-    #                     # self.map[self.x][self.y] = 0
-    #                     x = x + 1
-    #                     self.current_chromosome.move += 1
-    #             else:
-    #                 # DL
-    #                 if x + 1 != 27 and self.map[x + 1][y - 1] != 1 and x >= 0 and y >= 0:
-    #                     self.map[x + 1][y - 1] = 2
-    #                     # self.map[self.x][self.y] = 0
-    #                     x = x + 1
-    #                     y = y - 1
-    #                     self.current_chromosome.move += 1
-    #         elif press_buttons[3] == 1:
-    #             # DR
-    #             if x + 1 != 27 and self.map[x + 1][y + 1] != 1 and x >= 0 and y >= 0:
-    #                 self.map[x + 1][y + 1] = 2
-    #                 # self.map[self.x][self.y] = 0
-    #                 x = x + 1
-    #                 y = y + 1
-    #                 self.current_chromosome.move += 1
-    #         else:
-    #             # D
-    #             if x + 1 != 27 and self.map[x + 1][y] != 1 and x >= 0 and y >= 0:
-    #                 self.map[x + 1][y] = 2
-    #                 # self.map[self.x][self.y] = 0
-    #                 x = x + 1
-    #                 self.current_chromosome.move += 1
-    #     elif press_buttons[2] == 1:
-    #         if press_buttons[3] == 1:
-    #             # LR
-    #             self.map[x][y] = 2
-    #         else:
-    #             # L
-    #             if x + 1 != 27 and self.map[x][y - 1] != 1 and x >= 0 and y >= 0:
-    #                 self.map[x][y - 1] = 2
-    #                 # self.map[self.x][self.y] = 0
-    #                 y = y - 1
-    #                 self.current_chromosome.move += 1
-    #     elif press_buttons[3] == 1:
-    #         # R
-    #         if x + 1 != 27 and self.map[x][y + 1] != 1 and x >= 0 and y >= 0:
-    #             self.map[x][y + 1] = 2
-    #             # self.map[self.x][self.y] = 0
-    #             y = y + 1
-    #             self.current_chromosome.move += 1
-        # print(self.x, self.y)
-
     # def update_screen(self):
         # screen = self.env.get_screen()
         # qimage = QImage(screen, screen.shape[1], screen.shape[0], QImage.Format_RGB888)
         # pixmap = QPixmap(qimage)
         # pixmap = pixmap.scaled(self.screen_width, self.screen_height, Qt.IgnoreAspectRatio)
         # self.screen_label.setPixmap(pixmap)
+
     def step(self, press_buttons):
         global main_map
 
@@ -453,6 +413,7 @@ class Ventilation(QWidget):
         global x
         global y
         global generation
+        global weather
 
         painter = QPainter()
         painter.begin(self)
@@ -472,12 +433,14 @@ class Ventilation(QWidget):
             # 18X26
             cnt += 1
             if main_map[t][i % 18] == 0:
+            # if self.map[t][i % 18] == 0:
                 painter.setPen(QPen(QColor.fromRgb(0, 0, 0), 1.0, Qt.SolidLine))
                 # 브러쉬 설정 (채우기)
                 painter.setBrush(QBrush(Qt.gray))
                 # painter.drawRect(480 + a, 0 + b, 10, 10)
                 painter.drawRect(a, 0 + b, 16, 16)
             elif main_map[t][i % 18] == 2:
+            # elif self.map[t][i % 18] == 2:
                 painter.setPen(QPen(QColor.fromRgb(0, 0, 0), 1.0, Qt.SolidLine))
                 # 브러쉬 설정 (채우기)
                 painter.setBrush(QBrush(Qt.yellow))
@@ -510,63 +473,6 @@ class Ventilation(QWidget):
         painter.drawRect(2 * 16, 26 * 16, 2 * 16, 1 * 16)
         painter.drawRect(9 * 16, 26 * 16, 4 * 16, 1 * 16)
 
-        # 원래 코드
-        # painter.setPen(QPen(Qt.black))
-        #
-        # ram = self.env.get_ram()
-        #
-        # full_screen_tiles = ram[0x0500:0x069F+1]
-        # full_screen_tile_count = full_screen_tiles.shape[0]
-        #
-        # full_screen_page1_tiles = full_screen_tiles[:full_screen_tile_count // 2].reshape((-1, 16))
-        # full_screen_page2_tiles = full_screen_tiles[full_screen_tile_count // 2:].reshape((-1, 16))
-        #
-        # full_screen_tiles = np.concatenate((full_screen_page1_tiles, full_screen_page2_tiles), axis=1).astype(np.int)
-        #
-        # enemy_drawn = ram[0x000F:0x0014]
-        # enemy_horizontal_position_in_level = ram[0x006E:0x0072+1]
-        # enemy_x_position_on_screen = ram[0x0087:0x008B+1]
-        # enemy_y_position_on_screen = ram[0x00CF:0x00D3+1]
-        #
-        # for i in range(5):
-        #     if enemy_drawn[i] == 1:
-        #         ex = (((enemy_horizontal_position_in_level[i] * 256) + enemy_x_position_on_screen[i]) % 512 + 8) // 16
-        #         ey = (enemy_y_position_on_screen[i] - 8) // 16 - 1
-        #         if 0 <= ex < full_screen_tiles.shape[1] and 0 <= ey < full_screen_tiles.shape[0]:
-        #             full_screen_tiles[ey][ex] = -1
-        #
-        # current_screen_in_level = ram[0x071A]
-        # screen_x_position_in_level = ram[0x071C]
-        # screen_x_position_offset = (256 * current_screen_in_level + screen_x_position_in_level) % 512
-        # sx = screen_x_position_offset // 16
-        #
-        # screen_tiles = np.concatenate((full_screen_tiles, full_screen_tiles), axis=1)[:, sx:sx+16]
-        #
-        # for i in range(screen_tiles.shape[0]):
-        #     for j in range(screen_tiles.shape[1]):
-        #         if screen_tiles[i][j] > 0:
-        #             screen_tiles[i][j] = 1
-        #         if screen_tiles[i][j] == -1:
-        #             screen_tiles[i][j] = 2
-        #             painter.setBrush(QBrush(Qt.red))
-        #         else:
-        #             painter.setBrush(QBrush(QColor.fromHslF(125 / 239, 0 if screen_tiles[i][j] == 0 else 1, 120 / 240)))
-        #         painter.drawRect(self.screen_width + self.screen_tiles_margin_x + 16 * j, self.screen_tiles_margin_y + 16 * i, 16, 16)
-        #
-        # player_x_position_current_screen_offset = ram[0x03AD]
-        # player_y_position_current_screen_offset = ram[0x03B8]
-        # px = (player_x_position_current_screen_offset + 8) // 16
-        # py = (player_y_position_current_screen_offset + 8) // 16 - 1
-        # painter.setBrush(QBrush(Qt.blue))
-        # painter.drawRect(self.screen_width + self.screen_tiles_margin_x + 16 * px, self.screen_tiles_margin_y + 16 * py, 16, 16)
-        #
-        # painter.setPen(QPen(Qt.magenta, 2, Qt.SolidLine))
-        # painter.setBrush(Qt.NoBrush)
-        # ix = px
-        # iy = 2
-        # painter.drawRect(self.screen_width + self.screen_tiles_margin_x + 16 * ix, self.screen_tiles_margin_y + iy * 16, 16 * 8, 16 * 10)
-        #
-        # input_data = screen_tiles[iy:iy+10, ix:ix+8]
         input_data = self.map
         # if 2 <= py <= 11:
         #     input_data[py - 2][0] = 2
@@ -626,11 +532,16 @@ class Ventilation(QWidget):
             #         break
 
         else:
+            # print(self.current_chromosome.w1)
+
             predict = self.current_chromosome.predict(input_data)
             # press_buttons = np.array([predict[5], 0, 0, 0, predict[0], predict[1], predict[2], predict[3], predict[4]])
             # self.env.step(press_buttons)
             press_buttons = np.array([predict[0], predict[1], predict[2], predict[3]])
+            # print(press_buttons)
             self.step(press_buttons)
+            # print(press_buttons[0][generation])
+            # self.step(press_buttons[0][generation])
 
             # print("load", self.current_chromosome.w1, self.current_chromosome.b1, self.current_chromosome.w2, self.current_chromosome.b2)
 
@@ -657,6 +568,9 @@ class Ventilation(QWidget):
             # for i in range(self.current_chromosome.l1.shape[0]):
             #     painter.setBrush(QBrush(QColor.fromHslF(125 / 239, 0 if self.current_chromosome.l1[i] == 0 else 1, 120 / 240)))
             #     painter.drawEllipse(288 + 10 + i * 40, 240, 12 * 2, 12 * 2)
+
+            for i in range(4):
+                painter.drawText(288 + 20 + i * 40 - 5, 100, weather[i])
 
             for i in range(predict.shape[0]):
                 painter.setBrush(QBrush(QColor.fromHslF(0.8, 0 if predict[i] <= 0.5 else 1, 0.8)))
