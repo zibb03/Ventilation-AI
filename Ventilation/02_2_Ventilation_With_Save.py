@@ -60,7 +60,8 @@ class Chromosome:
         # return int(max(self.distance ** 1.8 - self.frames ** 1.5 + min(max(self.distance - 50, 0), 1) * 2500 + self.win * 1000000, 1))
         # print(self.distance, self.frames)
         # print((self.distance * 2 - self.frames + max(self.move - 10, 0) * 5 + self.win1 * 1000))
-        return int(max(self.distance ** 2 - self.frames + max(self.move - 5, 0) * 5 + self.win4 * 1000 + self.win5 * 1000, 1))
+        # return int(max(self.distance ** 2 - self.frames + max(self.move - 5, 0) * 5 + self.win4 * 1000 + self.win5 * 1000, 1))
+        return int(max(self.distance ** 2 - self.frames + max(self.move - 5, 0) * 5 + self.win1 * 1000, self.win5 * 1000, 1))
         # return int(max(self.distance * 1.2 + self.move * 2 + self.win1 * 5 + self.win2 * 5 + self.win3 * 10 + self.win4 * 20 + self.win5 * 30, 1))
 
 class GeneticAlgorithm:
@@ -199,7 +200,7 @@ class Ventilation(QWidget):
         #         break
 
         self.x = 0
-        self.y = 15
+        self.y = 9
 
         self.ga = GeneticAlgorithm()
 
@@ -519,7 +520,7 @@ class Ventilation(QWidget):
             #     if self.map[0][tmp] == 0:
             #         break
             self.x = 0
-            self.y = 15
+            self.y = 9
 
         else:
             predict = current_chromosome.predict(input_data)

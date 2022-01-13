@@ -2,7 +2,7 @@
 
 import retro
 from PyQt5.QtGui import QImage, QPixmap, QPainter, QPen, QBrush, QColor
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt, QTimer, QRect
 from PyQt5.QtWidgets import QApplication, QLabel, QWidget
 import numpy as np
 import sys

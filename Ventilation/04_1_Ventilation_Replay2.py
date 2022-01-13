@@ -4,7 +4,7 @@
 
 import retro
 from PyQt5.QtGui import QImage, QPixmap, QPainter, QPen, QBrush, QColor
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt, QTimer, QRect
 from PyQt5.QtWidgets import QApplication, QLabel, QWidget
 import numpy as np
 import sys
@@ -29,6 +29,7 @@ generation = 0
 chromosome_index = 0
 start = [2, 3, 8, 9, 10, 11, 12, 13, 14, 15]
 weather = Web_Crawler.start()
+socket_check = ['0', '0', '0', '0', '0', '0', '0', '0']
 
 w1 = [np.random.uniform(low=-1, high=1, size=(486, 48)), np.random.uniform(low=-1, high=1, size=(486, 48)),
            np.random.uniform(low=-1, high=1, size=(486, 48)),
@@ -136,7 +137,7 @@ class Chromosome:
         return result
 
     def fitness(self):
-        return int(max(self.distance ** 2 - self.frames + max(self.move - 5, 0) * 5 + self.win1 * 1000, 1))
+        return int(max(self.distance ** 2 - self.frames + max(self.move - 5, 0) * 5 + self.win1 * 1000, self.win5 * 1000, 1))
         # print(self.distance, self.move, self.win1, self.win2, self.win3, self.win4, self.win5)
         # 2-0
         # return int(max(self.distance * 1.2 + self.move * 2 + self.win1 * 5 + self.win2 * 5 + self.win3 * 10 + self.win4 * 20 + self.win5 * 30, 1))
@@ -219,7 +220,7 @@ class Ventilation(QWidget):
         #
         # self.setFixedSize(self.screen_width + 400, self.screen_height)
         # self.setFixedSize(454, 448)
-        self.setFixedSize(600, 448)
+        self.setFixedSize(655, 448 + 16)
         self.setWindowTitle('Ventilation-AI')
 
         # while True:
@@ -229,10 +230,21 @@ class Ventilation(QWidget):
 
         # self.screen_label = QLabel(self)
         # self.screen_label.setGeometry(0, 0, self.screen_width, self.screen_height)
+        # self.image_label = QLabel(self)
+        # self.image_label.setPixmap(QPixmap("C:/Users/user/Desktop/철권.png"))
+        # self.image_label.setGeometry(QRect(288 + 100, 200, 200, 200))
+
+        self.lbl = QLabel(self)
+        self.lbl.resize(400, 400)
+        self.lbl.setGeometry(QRect(288 + 16 + 100, 208, 160, 160))
+        pixmap = QPixmap("C:/Users/user/Documents/GitHub/Ventilation-AI/SCINOVATOR.png")
+        self.lbl.setPixmap(QPixmap(pixmap))
 
         self.info_label = QLabel(self)
-        self.info_label.setGeometry(288 + 10 + 200, 432 + 10 - 70, 70, 70)
-        self.info_label.setText('?????세대\n?번 \n???????')
+        # self.info_label.setGeometry(288 + 10 + 200, 432 + 10 - 70, 70, 70)
+        self.info_label.setGeometry(288 + 220 + 32, 384, 70, 70)
+        # self.info_label.setText('?????세대\n?번 \n???????')
+        self.info_label.setText('?????번 유전자\n적합도: ???????')
 
         # self.current_chromosome.w1 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/w1.npy')
         # self.current_chromosome.b1 = np.load(f'../replay/{self.current_chromosome.generation}/{self.current_chromosome.chromosome_index}/b1.npy')
@@ -407,13 +419,16 @@ class Ventilation(QWidget):
 
         # self.update_screen()
         self.update()
-        self.info_label.setText(f'{generation}세대\n{chromosome_index}번 \n{self.current_chromosome.fitness()}')
+        # self.info_label.setText(f'{generation}세대\n{chromosome_index}번 \n{self.current_chromosome.fitness()}')
+        # self.image_label.setPixmap(QPixmap("SCINOVATOR.png"))
+        self.info_label.setText(f'{generation + 1}번 유전자\n적합도: {self.current_chromosome.fitness()}')
 
     def paintEvent(self, e):
         global x
         global y
         global generation
         global weather
+        global socket_check
 
         painter = QPainter()
         painter.begin(self)
@@ -427,6 +442,14 @@ class Ventilation(QWidget):
         painter.setBrush(QBrush(Qt.white))
         # 직사각형 (왼쪽 위, 오른쪽 아래)
 
+        painter.drawRect(288 + 32, 16, 320, 80)
+        painter.drawRect(288 + 32, 112, 320, 80)
+        painter.drawRect(288 + 32, 384, 320, 64)
+
+        for i in range(18):
+            if main_map[0][i] == 2:
+                main_map[0][i] = 0
+
         t = 0
         # 타일 그리기
         for i in range(486):
@@ -438,20 +461,20 @@ class Ventilation(QWidget):
                 # 브러쉬 설정 (채우기)
                 painter.setBrush(QBrush(Qt.gray))
                 # painter.drawRect(480 + a, 0 + b, 10, 10)
-                painter.drawRect(a, 0 + b, 16, 16)
+                painter.drawRect(a + 16, b + 16, 16, 16)
             elif main_map[t][i % 18] == 2:
             # elif self.map[t][i % 18] == 2:
                 painter.setPen(QPen(QColor.fromRgb(0, 0, 0), 1.0, Qt.SolidLine))
                 # 브러쉬 설정 (채우기)
                 painter.setBrush(QBrush(Qt.yellow))
                 # painter.drawRect(480 + a, 0 + b, 10, 10)
-                painter.drawRect(a, 0 + b, 16, 16)
+                painter.drawRect(a + 16, b + 16, 16, 16)
             else:
                 painter.setPen(QPen(QColor.fromRgb(0, 0, 0), 1.0, Qt.SolidLine))
                 # 브러쉬 설정 (채우기)
                 painter.setBrush(QBrush(Qt.blue))
                 # painter.drawRect(480 + a, 0 + b, 10, 10)
-                painter.drawRect(a, 0 + b, 16, 16)
+                painter.drawRect(a + 16, b + 16, 16, 16)
             a += 16
             # print(cnt)
             if cnt % 18 == 0:
@@ -462,16 +485,27 @@ class Ventilation(QWidget):
         painter.setPen(QPen(Qt.magenta, 2, Qt.SolidLine))
         painter.setBrush(Qt.NoBrush)
 
-        painter.drawRect(2 * 16, 7 * 16, 2 * 16, 1 * 16)
-        painter.drawRect(8 * 16, 3 * 16, 2 * 16, 1 * 16)
-        painter.drawRect(14 * 16, 3 * 16, 2 * 16, 1 * 16)
-        painter.drawRect(11 * 16, 6 * 16, 2 * 16, 2 * 16)
-        painter.drawRect(11 * 16, 11 * 16, 2 * 16, 2 * 16)
-        painter.drawRect(7 * 16, 15 * 16, 2 * 16, 1 * 16)
-        painter.drawRect(7 * 16, 20 * 16, 2 * 16, 1 * 16)
-        painter.drawRect(5 * 16, 22 * 16, 1 * 16, 2 * 16)
-        painter.drawRect(2 * 16, 26 * 16, 2 * 16, 1 * 16)
-        painter.drawRect(9 * 16, 26 * 16, 4 * 16, 1 * 16)
+        # painter.drawRect(2 * 16, 7 * 16, 2 * 16, 1 * 16)
+        # painter.drawRect(8 * 16, 3 * 16, 2 * 16, 1 * 16)
+        # painter.drawRect(14 * 16, 3 * 16, 2 * 16, 1 * 16)
+        # painter.drawRect(11 * 16, 6 * 16, 2 * 16, 2 * 16)
+        # painter.drawRect(11 * 16, 11 * 16, 2 * 16, 2 * 16)
+        # painter.drawRect(7 * 16, 15 * 16, 2 * 16, 1 * 16)
+        # painter.drawRect(7 * 16, 20 * 16, 2 * 16, 1 * 16)
+        # painter.drawRect(5 * 16, 22 * 16, 1 * 16, 2 * 16)
+        # painter.drawRect(2 * 16, 26 * 16, 2 * 16, 1 * 16)
+        # painter.drawRect(9 * 16, 26 * 16, 4 * 16, 1 * 16)
+
+        painter.drawRect(3 * 16, 8 * 16, 2 * 16, 1 * 16)
+        painter.drawRect(9 * 16, 4 * 16, 2 * 16, 1 * 16)
+        painter.drawRect(15 * 16, 4 * 16, 2 * 16, 1 * 16)
+        painter.drawRect(12 * 16, 7 * 16, 2 * 16, 2 * 16)
+        painter.drawRect(12 * 16, 12 * 16, 2 * 16, 2 * 16)
+        painter.drawRect(8 * 16, 16 * 16, 2 * 16, 1 * 16)
+        painter.drawRect(8 * 16, 21 * 16, 2 * 16, 1 * 16)
+        painter.drawRect(6 * 16, 23 * 16, 1 * 16, 2 * 16)
+        painter.drawRect(3 * 16, 27 * 16, 2 * 16, 1 * 16)
+        painter.drawRect(8 * 16, 27 * 16, 4 * 16, 1 * 16)
 
         input_data = self.map
         # if 2 <= py <= 11:
@@ -482,26 +516,64 @@ class Ventilation(QWidget):
         # self.current_chromosome.distance = ram[0x006D] * 256 + ram[0x0086]
         self.current_chromosome.distance = x
 
+        # 문 배열
+        for i in range(2):
+            if main_map[8][i + 2] == 2:
+                socket_check[0] = '1'
+
+        for i in range(2):
+            if main_map[3][i + 8] == 2:
+                socket_check[1] = '1'
+
+        for i in range(2):
+            if main_map[3][i + 14] == 2:
+                socket_check[2] = '1'
+
+        for i in range(2):
+            for j in range(2):
+                if main_map[i + 6][j + 11] == 2:
+                    socket_check[3] = '1'
+
+
+        for i in range(2):
+            if main_map[15][i + 7] == 2:
+                socket_check[4] = '1'
+
+        for i in range(2):
+            if main_map[20][i + 7] == 2:
+                socket_check[5] = '1'
+
+        for i in range(2):
+            for j in range(2):
+                if main_map[i + 11][j + 11] == 2:
+                    socket_check[6] = '1'
+
+        for i in range(2):
+            if main_map[i + 22][5] == 2:
+                socket_check[7] = '1'
+
+        # 점수 체계
         for i in range(2):
             if self.map[26][i + 3] == 2:
                 self.current_chromosome.win1 = 1
                 break
-        for i in range(6):
-            for j in range(4):
-                if self.map[i + 16][j + 6] == 2:
-                    self.current_chromosome.win2 = 1
-                    break
-        for i in range(5):
-            for j in range(5):
-                if self.map[i + 16][j + 12] == 2:
-                    self.current_chromosome.win3 = 1
-                    break
-        for i in range(5):
-            for j in range(12):
-                # map[세로][가로]
-                if self.map[i + 18][j + 5] == 2:
-                    self.current_chromosome.win4 = 1
-                    break
+
+        # for i in range(6):
+        #     for j in range(4):
+        #         if self.map[i + 16][j + 6] == 2:
+        #             self.current_chromosome.win2 = 1
+        #             break
+        # for i in range(5):
+        #     for j in range(5):
+        #         if self.map[i + 16][j + 12] == 2:
+        #             self.current_chromosome.win3 = 1
+        #             break
+        # for i in range(5):
+        #     for j in range(12):
+        #         # map[세로][가로]
+        #         if self.map[i + 18][j + 5] == 2:
+        #             self.current_chromosome.win4 = 1
+        #             break
         for i in range(5):
             if self.map[26][i + 9] == 2:
                 self.current_chromosome.win5 = 1
@@ -519,7 +591,7 @@ class Ventilation(QWidget):
 
             # print(f'적합도: {self.current_chromosome.fitness()}')
             # print(y, self.current_chromosome.generation)
-
+            # time.sleep(2)
             self.current_chromosome.clear()
             self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
 
@@ -569,15 +641,32 @@ class Ventilation(QWidget):
             #     painter.setBrush(QBrush(QColor.fromHslF(125 / 239, 0 if self.current_chromosome.l1[i] == 0 else 1, 120 / 240)))
             #     painter.drawEllipse(288 + 10 + i * 40, 240, 12 * 2, 12 * 2)
 
-            for i in range(4):
-                painter.drawText(288 + 20 + i * 40 - 5, 100, weather[i])
+            weather_text = ['온도', '습도', '풍향', '풍속']
+            door_text = ['1번문', '2번문', '3번문', '4번문', '5번문', '6번문', '7번문', '8번문']
 
+            for i in range(4):
+                painter.drawText(288 + 70 + i * 75 - 5, 50, weather_text[i])
+                painter.drawText(288 + 70 + i * 75 - 5, 70, weather[i])
+
+            for i in range(8):
+                painter.drawText(288 + 42.5 + i * 40 - 5, 130 + 16, door_text[i])
+
+            # print(socket_check)
+            for i in range(8):
+                if socket_check[i] == '1':
+                    painter.setPen(QPen(Qt.green, 2.0, Qt.SolidLine))
+                    painter.drawText(288 + 45 + i * 40 - 5, 150 + 16, '열림')
+                else:
+                    painter.setPen(QPen(Qt.red, 2.0, Qt.SolidLine))
+                    painter.drawText(288 + 45 + i * 40 - 5, 150 + 16, '닫침')
+
+            painter.setPen(QPen(Qt.black, 2.0, Qt.SolidLine))
             for i in range(predict.shape[0]):
                 painter.setBrush(QBrush(QColor.fromHslF(0.8, 0 if predict[i] <= 0.5 else 1, 0.8)))
                 #세로 가로
-                painter.drawEllipse(288 + 20 + i * 40, 400, 12 * 2, 12 * 2)
+                painter.drawEllipse(288 + 72 + i * 40, 390 + 10, 16 * 2, 16 * 2)
                 text = ('U', 'D', 'L', 'R')[i]
-                painter.drawText(288 + 20 + i * 40 - 5, 430, text)
+                painter.drawText(288 + 72 + i * 40 - 5, 420 + 16, text)
 
         painter.end()
 
