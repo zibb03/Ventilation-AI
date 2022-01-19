@@ -11,8 +11,10 @@ import sys
 import random
 import os
 import time
+import websocket
 
 import Web_Crawler
+import Web_Socket_Client
 
 relu = lambda X: np.maximum(0, X)
 sigmoid = lambda x: 1.0 / (1.0 + np.exp(-x))
@@ -30,6 +32,7 @@ chromosome_index = 0
 start = [2, 3, 8, 9, 10, 11, 12, 13, 14, 15]
 weather = Web_Crawler.start()
 socket_check = ['0', '0', '0', '0', '0', '0', '0', '0']
+time_check = 0
 
 w1 = [np.random.uniform(low=-1, high=1, size=(486, 48)), np.random.uniform(low=-1, high=1, size=(486, 48)),
            np.random.uniform(low=-1, high=1, size=(486, 48)),
@@ -122,6 +125,7 @@ class Chromosome:
         global b2
 
         global generation
+        global socket_check
 
         # self.l1 = relu(np.matmul(data, self.w1) + self.b1)
         # print(data)
@@ -138,24 +142,23 @@ class Chromosome:
 
     def fitness(self):
         return int(max(self.distance ** 2 - self.frames + max(self.move - 5, 0) * 5 + self.win1 * 1000, self.win5 * 1000, 1))
-        # print(self.distance, self.move, self.win1, self.win2, self.win3, self.win4, self.win5)
-        # 2-0
-        # return int(max(self.distance * 1.2 + self.move * 2 + self.win1 * 5 + self.win2 * 5 + self.win3 * 10 + self.win4 * 20 + self.win5 * 30, 1))
-        # 2-1
-        # return int(max(self.distance ** 2 - self.frames + max(self.move - 5, 0) * 5 + self.win1 * 1000, 1))
 
     # 개체 통계값 초기화
     def clear(self):
-        time.sleep(3)
+        # time.sleep(3)
 
         global x
         global y
         global generation
         global chromosome_index
+        global time_check
 
         generation += 1
+        time_check = 0
 
         if generation == 10:
+            # Web_Socket_Client.sendstring(socket_check)
+            Web_Socket_Client.ending()
             time.sleep(5)
             exit(0)
 
@@ -429,6 +432,7 @@ class Ventilation(QWidget):
         global generation
         global weather
         global socket_check
+        global time_check
 
         painter = QPainter()
         painter.begin(self)
@@ -534,7 +538,6 @@ class Ventilation(QWidget):
                 if main_map[i + 6][j + 11] == 2:
                     socket_check[3] = '1'
 
-
         for i in range(2):
             if main_map[15][i + 7] == 2:
                 socket_check[4] = '1'
@@ -585,27 +588,94 @@ class Ventilation(QWidget):
         else:
             self.current_chromosome.stop_frames += 1
 
-        if self.current_chromosome.stop_frames > 5 or self.current_chromosome.win1 == 1 or self.current_chromosome.win5 == 1:
+        # print(time_check)
+        if time_check == 0 and (self.current_chromosome.stop_frames > 5 or self.current_chromosome.win1 == 1 or self.current_chromosome.win5 == 1):
             # if ram[0x001D] == 3:
             #     self.current_chromosome.win = 1
 
             # print(f'적합도: {self.current_chromosome.fitness()}')
             # print(y, self.current_chromosome.generation)
             # time.sleep(2)
+            # time_check = 0
+            time_check += 1
+
+        elif time_check == 300:
+            Web_Socket_Client.sendstring(socket_check)
             self.current_chromosome.clear()
             self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
 
+            time_check = 0
             print(x, y, generation)
-            # self.env.reset()
-            # self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
-            # while True:
-            #     tmp = np.random.randint(0, 18)
-            #     if self.map[0][tmp] == 0:
-            #         break
+
+        elif time_check != 0:
+            time_check += 1
+            # print(time_check)
+
+            predict = self.current_chromosome.predict(input_data)
+            # press_buttons = np.array([predict[5], 0, 0, 0, predict[0], predict[1], predict[2], predict[3], predict[4]])
+            # self.env.step(press_buttons)
+            press_buttons = np.array([predict[0], predict[1], predict[2], predict[3]])
+            # print(press_buttons)
+            self.step(press_buttons)
+            # print(press_buttons[0][generation])
+            # self.step(press_buttons[0][generation])
+
+            # print("load", self.current_chromosome.w1, self.current_chromosome.b1, self.current_chromosome.w2, self.current_chromosome.b2)
+
+            # for i in range(predict.shape[0]):
+            #     if predict[i] == 1:
+            #         painter.setBrush(QBrush(Qt.magenta))
+            #     else:
+            #         painter.setBrush(QBrush(Qt.gray))
+            #     painter.drawEllipse(300 + i * 40, 100, 10 * 2, 10 * 2)
+            #     text = ('U', 'D', 'L', 'R')[i]
+            #     painter.drawText(300 + i * 40, 140, text)
+
+            # painter.end()
+
+            #     for i in range(self.current_chromosome.w2.shape[0]):
+            #         for j in range(self.current_chromosome.w2.shape[1]):
+            #             if self.current_chromosome.w2[i][j] > 0:
+            #                 painter.setPen(QPen(Qt.red, 1, Qt.SolidLine))
+            #             else:
+            #                 painter.setPen(QPen(Qt.blue, 1, Qt.SolidLine))
+            #             painter.drawLine(self.screen_width + self.neural_network_l1_margin_x + self.neural_network_w2_margin_x + i * 40, 252, self.screen_width + self.neural_network_predict_margin_x + self.neural_network_w2_margin_x + j * 40, 452)
+            #
+            painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))
+            # for i in range(self.current_chromosome.l1.shape[0]):
+            #     painter.setBrush(QBrush(QColor.fromHslF(125 / 239, 0 if self.current_chromosome.l1[i] == 0 else 1, 120 / 240)))
+            #     painter.drawEllipse(288 + 10 + i * 40, 240, 12 * 2, 12 * 2)
+
+            weather_text = ['온도', '습도', '풍향', '풍속']
+            door_text = ['1번문', '2번문', '3번문', '4번문', '5번문', '6번문', '7번문', '8번문']
+
+            for i in range(4):
+                painter.drawText(288 + 70 + i * 75 - 5, 50, weather_text[i])
+                painter.drawText(288 + 70 + i * 75 - 5, 70, weather[i])
+
+            for i in range(8):
+                painter.drawText(288 + 42.5 + i * 40 - 5, 130 + 16, door_text[i])
+
+            # print(socket_check)
+            for i in range(8):
+                if socket_check[i] == '1':
+                    painter.setPen(QPen(Qt.green, 2.0, Qt.SolidLine))
+                    painter.drawText(288 + 45 + i * 40 - 5, 150 + 16, '열림')
+                else:
+                    painter.setPen(QPen(Qt.red, 2.0, Qt.SolidLine))
+                    painter.drawText(288 + 45 + i * 40 - 5, 150 + 16, '닫침')
+
+            painter.setPen(QPen(Qt.black, 2.0, Qt.SolidLine))
+            for i in range(predict.shape[0]):
+                painter.setBrush(QBrush(QColor.fromHslF(0.8, 0 if predict[i] <= 0.5 else 1, 0.8)))
+                # 세로 가로
+                painter.drawEllipse(288 + 72 + i * 40, 390 + 10, 16 * 2, 16 * 2)
+                text = ('U', 'D', 'L', 'R')[i]
+                painter.drawText(288 + 72 + i * 40 - 5, 420 + 16, text)
+
+            painter.end()
 
         else:
-            # print(self.current_chromosome.w1)
-
             predict = self.current_chromosome.predict(input_data)
             # press_buttons = np.array([predict[5], 0, 0, 0, predict[0], predict[1], predict[2], predict[3], predict[4]])
             # self.env.step(press_buttons)

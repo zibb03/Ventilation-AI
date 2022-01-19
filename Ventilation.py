@@ -1,242 +1,512 @@
-# [도전과제9]
-# 07. get_current_screen_tile.py 에서 가져온 현재 타일 정보 그리기
+# 최종 완성본
 
-import sys
-from PyQt5.QtGui import QImage, QPixmap, QPainter, QPen, QBrush, QColor
-from PyQt5.QtCore import Qt, QTimer
-from PyQt5.QtWidgets import QApplication,\
-    QWidget, QLabel, QPushButton
+from PyQt5.QtGui import QPixmap, QPainter, QPen, QBrush, QColor
+from PyQt5.QtCore import Qt, QTimer, QRect
+from PyQt5.QtWidgets import QApplication, QLabel, QWidget
 import numpy as np
+import sys
+import time
 
-class MyApp(QWidget):
+import Web_Crawler
+import Web_Socket_Client
+
+# 활성화 함수
+relu = lambda X: np.maximum(0, X)
+sigmoid = lambda x: 1.0 / (1.0 + np.exp(-x))
+
+def except_hook(cls, exception, traceback):
+    sys.__excepthook__(cls, exception, traceback)
+
+# 전역 변수
+main_map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
+
+x = 0
+y = 2
+generation = 0
+chromosome_index = 0
+start = [2, 3, 8, 9, 10, 11, 12, 13, 14, 15]
+weather = Web_Crawler.start()
+socket_check = ['0', '0', '0', '0', '0', '0', '0', '0']
+time_check = 0
+
+w1 = [np.random.uniform(low=-1, high=1, size=(486, 48)), np.random.uniform(low=-1, high=1, size=(486, 48)),
+           np.random.uniform(low=-1, high=1, size=(486, 48)),
+           np.random.uniform(low=-1, high=1, size=(486, 48)), np.random.uniform(low=-1, high=1, size=(486, 48)),
+           np.random.uniform(low=-1, high=1, size=(486, 48)),
+           np.random.uniform(low=-1, high=1, size=(486, 48)), np.random.uniform(low=-1, high=1, size=(486, 48)),
+           np.random.uniform(low=-1, high=1, size=(486, 48)),
+           np.random.uniform(low=-1, high=1, size=(486, 48))]
+b1 = [np.random.uniform(low=-1, high=1, size=(48,)), np.random.uniform(low=-1, high=1, size=(48,)),
+           np.random.uniform(low=-1, high=1, size=(48,)),
+           np.random.uniform(low=-1, high=1, size=(48,)), np.random.uniform(low=-1, high=1, size=(48,)),
+           np.random.uniform(low=-1, high=1, size=(48,)),
+           np.random.uniform(low=-1, high=1, size=(48,)), np.random.uniform(low=-1, high=1, size=(48,)),
+           np.random.uniform(low=-1, high=1, size=(48,)),
+           np.random.uniform(low=-1, high=1, size=(48,))]
+
+w2 = [np.random.uniform(low=-1, high=1, size=(48, 4)), np.random.uniform(low=-1, high=1, size=(48, 4)),
+           np.random.uniform(low=-1, high=1, size=(48, 4)),
+           np.random.uniform(low=-1, high=1, size=(48, 4)), np.random.uniform(low=-1, high=1, size=(48, 4)),
+           np.random.uniform(low=-1, high=1, size=(48, 4)),
+           np.random.uniform(low=-1, high=1, size=(48, 4)), np.random.uniform(low=-1, high=1, size=(48, 4)),
+           np.random.uniform(low=-1, high=1, size=(48, 4)),
+           np.random.uniform(low=-1, high=1, size=(48, 4))]
+b2 = [np.random.uniform(low=-1, high=1, size=(4,)), np.random.uniform(low=-1, high=1, size=(4,)),
+           np.random.uniform(low=-1, high=1, size=(4,)),
+           np.random.uniform(low=-1, high=1, size=(4,)), np.random.uniform(low=-1, high=1, size=(4,)),
+           np.random.uniform(low=-1, high=1, size=(4,)),
+           np.random.uniform(low=-1, high=1, size=(4,)), np.random.uniform(low=-1, high=1, size=(4,)),
+           np.random.uniform(low=-1, high=1, size=(4,)),
+           np.random.uniform(low=-1, high=1, size=(4,))]
+
+class Chromosome:
+    def __init__(self):
+        self.distance = 0
+        self.max_distance = 0
+        self.frames = 0
+        self.move = 0
+        self.stop_frames = 0
+        self.win1 = 0
+        self.win2 = 0
+        self.win3 = 0
+        self.win4 = 0
+        self.win5 = 0
+
+    def predict(self, data):
+        global w1
+        global b1
+        global w2
+        global b2
+        global generation
+        global socket_check
+
+        self.l1 = relu(np.matmul(data, w1[generation]) + b1[generation])
+        output = sigmoid(np.matmul(self.l1, w2[generation]) + b2[generation])
+        result = (output > 0.5).astype(np.int)
+
+        return result
+
+    def fitness(self):
+        return int(max(self.distance ** 2 - self.frames + max(self.move - 5, 0) * 5 + self.win1 * 1000, self.win5 * 1000, 1))
+
+    # 개체 통계값 초기화
+    def clear(self):
+        global x
+        global y
+        global generation
+        global chromosome_index
+        global time_check
+
+        generation += 1
+        time_check = 0
+
+        if generation == 10:
+            Web_Socket_Client.ending()
+            time.sleep(5)
+            exit(0)
+
+        self.current_chromosome = Chromosome()
+        x = 0
+        y = start[generation]
+
+        self.distance = 0
+        self.max_distance = 0
+        self.frames = 0
+        self.move = 0
+        self.stop_frames = 0
+
+        self.win1 = 0
+        self.win2 = 0
+        self.win3 = 0
+        self.win4 = 0
+        self.win5 = 0
+
+
+class Ventilation(QWidget):
     def __init__(self):
         super().__init__()
-        # 창 크기 고정
-        self.setFixedSize(820, 448)
-        # 창 제목 설정
-        self.setWindowTitle('Ventilation')
 
-        self.press_buttons = [0, 0, 0, 0]
-        #self.full_screen_tiles = np.array([0])
-        #self.i = 0
+        sys.excepthook = except_hook
 
-        # 이미지
-        # self.label_image = QLabel(self)
+        global x
+        global y
+        global generation
+        global chromosome_index
+        global start
+
         self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
-        # self.map2 = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
 
-        # for i in range(18):
-        #     if self.map[0][i] == 0:
-        #         self.x = 0
-        #         self.y = i
-        #
-        #         # 타이머 생성
-        #         self.qtimer = QTimer(self)
-        #         # 타이머에 호출할 함수 연결
-        #         self.qtimer.timeout.connect(self.game_timer)
-        #         # 1초(1000밀리초)마다 연결된 함수를 실행
-        #         self.qtimer.start(1000)
-        #
-        #         self.show()
-        while True:
-            tmp = np.random.randint(0, 18)
-            if self.map[0][tmp] == 0:
-                break
+        self.setFixedSize(655, 448 + 16)
+        self.setWindowTitle('Ventilation-AI')
 
-        self.x = 0
-        self.y = tmp
+        self.lbl = QLabel(self)
+        self.lbl.resize(400, 400)
+        self.lbl.setGeometry(QRect(288 + 16 + 100, 208, 160, 160))
+        pixmap = QPixmap("C:/Users/user/Documents/GitHub/Ventilation-AI/SCINOVATOR.png")
+        self.lbl.setPixmap(QPixmap(pixmap))
 
-        # 타이머 생성
-        self.qtimer = QTimer(self)
-        # 타이머에 호출할 함수 연결
-        self.qtimer.timeout.connect(self.game_timer)
-        # 1초(1000밀리초)마다 연결된 함수를 실행
-        self.qtimer.start(1000)
+        self.info_label = QLabel(self)
+        self.info_label.setGeometry(288 + 220 + 32, 384, 70, 70)
+        self.info_label.setText('?????번 유전자\n적합도: ???????')
+
+        self.current_chromosome = Chromosome()
+
+        for i in range(10):
+            w1[i] = np.load(f'replay/{i}/{chromosome_index}/w1.npy')
+            b1[i] = np.load(f'replay/{i}/{chromosome_index}/b1.npy')
+            w2[i] = np.load(f'replay/{i}/{chromosome_index}/w2.npy')
+            b2[i] = np.load(f'replay/{i}/{chromosome_index}/b2.npy')
+
+        print(x, y, generation)
+
+        self.game_timer = QTimer(self)
+        self.game_timer.timeout.connect(self.update_game)
+        self.game_timer.start(1000 // 60)
 
         self.show()
 
-    def paintEvent(self, event):
-        # self.ram = self.env.get_ram()
+    def step(self, press_buttons):
+        global main_map
 
-        # 위쪽 타일 배열
-        # full_screen_tiles = self.ram[0x0500:0x069F + 1]
-        # full_screen_tile_count = full_screen_tiles.shape[0]
+        global x
+        global y
 
-        # 정수여야 해서 / 2개
-        # full_screen_page1_tile = full_screen_tiles[0:full_screen_tile_count // 2].reshape((13, 16))
-        # full_screen_page2_tile = full_screen_tiles[full_screen_tile_count // 2:].reshape((13, 16))
+        # U, D, L, R
+        # map[세로][가로]
+        if press_buttons[0] == 1:
+            if press_buttons[1] == 1:
+                if press_buttons[2] == 1:
+                    # UDL
+                    if press_buttons[3] == 1:
+                        # UDLR
+                        self.map[x][y] = 2
+                        main_map[x][y] = 2
+                    else:
+                        if x + 1 != 27 and self.map[x][y - 1] != 1 and \
+                                x >= 0 and y >= 0:
+                            self.map[x][y - 1] = 2
+                            main_map[x][y - 1] = 2
+                            y = y - 1
+                            self.current_chromosome.move += 1
+                elif press_buttons[3] == 1:
+                    # UDR
+                    if x + 1 != 27 and self.map[x][y + 1] != 1 and \
+                            x >= 0 and y >= 0:
+                        self.map[x][y + 1] = 2
+                        main_map[x][y + 1] = 2
+                        y = y + 1
+                        self.current_chromosome.move += 1
+                else:
+                    # UD
+                    self.map[x][y] = 2
+                    main_map[x][y] = 2
+            elif press_buttons[2] == 1:
+                if press_buttons[3] == 1:
+                    # ULR
+                    if x + 1 != 27 and self.map[x - 1][y] != 1 and x > 0 and y >= 0:
+                        self.map[x - 1][y] = 2
+                        main_map[x - 1][y] = 2
+                        x = x - 1
+                        self.current_chromosome.move += 1
+                else:
+                    # UL
+                    if x + 1 != 27 and self.map[x - 1][y - 1] != 1 and x > 0 and y >= 0:
+                        self.map[x - 1][y - 1] = 2
+                        main_map[x - 1][y - 1] = 2
+                        x = x - 1
+                        y = y - 1
+                        self.current_chromosome.move += 1
+            elif press_buttons[3] == 1:
+                # UR
+                if x + 1 != 27 and self.map[x - 1][y + 1] != 1 and x > 0 and y >= 0:
+                    self.map[x - 1][y + 1] = 2
+                    main_map[x - 1][y + 1] = 2
+                    x = x - 1
+                    y = y + 1
+                    self.current_chromosome.move += 1
+            else:
+                # U
+                if x + 1 != 27 and self.map[x - 1][y] != 1 and x > 0 and y >= 0:
+                    self.map[x - 1][y] = 2
+                    main_map[x - 1][y] = 2
+                    x = x - 1
+                    self.current_chromosome.move += 1
+        elif press_buttons[1] == 1:
+            if press_buttons[2] == 1:
+                if press_buttons[3] == 1:
+                    # DLR
+                    if x + 1 != 27 and self.map[x + 1][y] != 1 and x >= 0 and y >= 0:
+                        self.map[x + 1][y] = 2
+                        main_map[x + 1][y] = 2
+                        x = x + 1
+                        self.current_chromosome.move += 1
+                else:
+                    # DL
+                    if x + 1 != 27 and self.map[x + 1][y - 1] != 1 and x >= 0 and y >= 0:
+                        self.map[x + 1][y - 1] = 2
+                        main_map[x + 1][y - 1] = 2
+                        x = x + 1
+                        y = y - 1
+                        self.current_chromosome.move += 1
+            elif press_buttons[3] == 1:
+                # DR
+                if x + 1 != 27 and self.map[x + 1][y + 1] != 1 and x >= 0 and y >= 0:
+                    self.map[x + 1][y + 1] = 2
+                    main_map[x + 1][y + 1] = 2
+                    x = x + 1
+                    y = y + 1
+                    self.current_chromosome.move += 1
+            else:
+                # D
+                if x + 1 != 27 and self.map[x + 1][y] != 1 and x >= 0 and y >= 0:
+                    self.map[x + 1][y] = 2
+                    main_map[x + 1][y] = 2
+                    x = x + 1
+                    self.current_chromosome.move += 1
+        elif press_buttons[2] == 1:
+            if press_buttons[3] == 1:
+                # LR
+                self.map[x][y] = 2
+                main_map[x][y] = 2
+            else:
+                # L
+                if x + 1 != 27 and self.map[x][y - 1] != 1 and x >= 0 and y >= 0:
+                    self.map[x][y - 1] = 2
+                    main_map[x][y - 1] = 2
+                    y = y - 1
+                    self.current_chromosome.move += 1
+        elif press_buttons[3] == 1:
+            # R
+            if x + 1 != 27 and self.map[x][y + 1] != 1 and x >= 0 and y >= 0:
+                self.map[x][y + 1] = 2
+                main_map[x][y + 1] = 2
+                y = y + 1
+                self.current_chromosome.move += 1
 
-        # full_screen_tiles = np.concatenate((full_screen_page1_tile, full_screen_page2_tile), axis=1).astype(np.int)
+    def update_game(self):
+        global main_map
 
-        # 아래쪽 타일 배열
-        # 0x071A	Current screen (in level)
-        # 현재 화면이 속한 페이지 번호
-        # current_screen_page = self.ram[0x071A]
-        # 0x071C	ScreenEdge X-Position, loads next screen when player past it?
-        # 페이지 속 현재 화면 위치
-        # screen_position = self.ram[0x071C]
-        # 화면 오프셋
-        # screen_offset = (256 * current_screen_page + screen_position) % 512
-        # 타일 화면 오프셋
-        # screen_tile_offset = screen_offset // 16
+        global generation
+        global chromosome_index
 
-        # 현재 화면 추출
-        # screen_tiles = np.concatenate((full_screen_tiles, full_screen_tiles), axis=1)[:,
-                       # screen_tile_offset:screen_tile_offset + 16]
+        self.update()
+        self.info_label.setText(f'{generation + 1}번 유전자\n적합도: {self.current_chromosome.fitness()}')
 
-        #print(screen_tiles)
+    def paintEvent(self, e):
+        global x
+        global y
+        global generation
+        global weather
+        global socket_check
+        global time_check
 
-        # 그리기 도구
         painter = QPainter()
-        # 그리기 시작
         painter.begin(self)
 
-        # 481부터 그리기
-        # Gray 107 107 107
-        # RGB 색상으로 펜 설정
-        #print(self.full_screen_tiles.shape)
-        # c = full_screen_tiles.shape[0]
-        # for i in range(0, c):
-        #print(full_screen_tiles.size)
         cnt = 0
         a = 0
         b = 0
-        #print(full_screen_tiles)
 
         painter.setPen(QPen(QColor.fromRgb(0, 0, 0), 1.0, Qt.SolidLine))
         # 브러쉬 설정 (채우기)
         painter.setBrush(QBrush(Qt.white))
         # 직사각형 (왼쪽 위, 오른쪽 아래)
-        # 1200, 448
+
+        painter.drawRect(288 + 32, 16, 320, 80)
+        painter.drawRect(288 + 32, 112, 320, 80)
+        painter.drawRect(288 + 32, 384, 320, 64)
+
+        for i in range(18):
+            if main_map[0][i] == 2:
+                main_map[0][i] = 0
 
         t = 0
-
+        # 타일 그리기
         for i in range(486):
             # 18X26
             cnt += 1
-            if self.map[t][i % 18] == 0:
+            if main_map[t][i % 18] == 0:
                 painter.setPen(QPen(QColor.fromRgb(0, 0, 0), 1.0, Qt.SolidLine))
                 # 브러쉬 설정 (채우기)
                 painter.setBrush(QBrush(Qt.gray))
-                # painter.drawRect(480 + a, 0 + b, 10, 10)
-                painter.drawRect(a, 0 + b, 16, 16)
-            elif self.map[t][i % 18] == 2:
+                painter.drawRect(a + 16, b + 16, 16, 16)
+            elif main_map[t][i % 18] == 2:
                 painter.setPen(QPen(QColor.fromRgb(0, 0, 0), 1.0, Qt.SolidLine))
                 # 브러쉬 설정 (채우기)
                 painter.setBrush(QBrush(Qt.yellow))
-                # painter.drawRect(480 + a, 0 + b, 10, 10)
-                painter.drawRect(a, 0 + b, 16, 16)
+                painter.drawRect(a + 16, b + 16, 16, 16)
             else:
                 painter.setPen(QPen(QColor.fromRgb(0, 0, 0), 1.0, Qt.SolidLine))
                 # 브러쉬 설정 (채우기)
                 painter.setBrush(QBrush(Qt.blue))
-                # painter.drawRect(480 + a, 0 + b, 10, 10)
-                painter.drawRect(a, 0 + b, 16, 16)
+                painter.drawRect(a + 16, b + 16, 16, 16)
             a += 16
-            #print(cnt)
+
             if cnt % 18 == 0:
                 a = 0
                 b += 16
                 t += 1
-        # t = 0
-        # for i in range(208):
-        #     # print(t, i)
-        #     cnt += 1
-        #     if screen_tiles[t][i % 16] == 0:
-        #         painter.setPen(QPen(QColor.fromRgb(0, 0, 0), 1.0, Qt.SolidLine))
-        #         # 브러쉬 설정 (채우기)
-        #         painter.setBrush(QBrush(Qt.gray))
-        #         painter.drawRect(480 + a, 20 + b, 10, 10)
-        #     else:
-        #         painter.setPen(QPen(QColor.fromRgb(0, 0, 0), 1.0, Qt.SolidLine))
-        #         # 브러쉬 설정 (채우기)
-        #         painter.setBrush(QBrush(Qt.blue))
-        #         painter.drawRect(480 + a, 20 + b, 10, 10)
-        #     a += 10
-        #     # print(cnt)
-        #     if cnt % 16 == 0:
-        #         a = 0
-        #         b += 10
-        #         t += 1
 
+        painter.setPen(QPen(Qt.magenta, 2, Qt.SolidLine))
+        painter.setBrush(Qt.NoBrush)
 
-    # def update_screen(self):
-        # # 화면 가져오기
-        # self.screen = self.env.get_screen()
+        # 문 구간 Painter
+        painter.drawRect(3 * 16, 8 * 16, 2 * 16, 1 * 16)
+        painter.drawRect(9 * 16, 4 * 16, 2 * 16, 1 * 16)
+        painter.drawRect(15 * 16, 4 * 16, 2 * 16, 1 * 16)
+        painter.drawRect(12 * 16, 7 * 16, 2 * 16, 2 * 16)
+        painter.drawRect(12 * 16, 12 * 16, 2 * 16, 2 * 16)
+        painter.drawRect(8 * 16, 16 * 16, 2 * 16, 1 * 16)
+        painter.drawRect(8 * 16, 21 * 16, 2 * 16, 1 * 16)
+        painter.drawRect(6 * 16, 23 * 16, 1 * 16, 2 * 16)
+        painter.drawRect(3 * 16, 27 * 16, 2 * 16, 1 * 16)
+        painter.drawRect(8 * 16, 27 * 16, 4 * 16, 1 * 16)
 
-        # screen_qimage = QImage(self.screen, self.screen.shape[1], self.screen.shape[0], QImage.Format_RGB888)
-        # pixmap = QPixmap(screen_qimage)
-        # pixmap = pixmap.scaled(480, 448, Qt.IgnoreAspectRatio)
-        # #pixmap = pixmap.scaled(self.screen_width, self.screen_height, Qt.IgnoreAspectRatio)
-        # self.label_image.setPixmap(pixmap)
+        input_data = self.map.flatten()
 
-    def step(self):
-        if self.press_buttons[0] == 1:
-            if self.map[self.x - 1][self.y] == 0:
-                self.map[self.x - 1][self.y] = 2
-                self.map[self.x][self.y] = 0
-                self.x = self.x - 1
-        elif self.press_buttons[1] == 1:
-            if self.map[self.x + 1][self.y] == 0:
-                self.map[self.x + 1][self.y] = 2
-                self.map[self.x][self.y] = 0
-                self.x = self.x + 1
-        elif self.press_buttons[2] == 1:
-            if self.map[self.x][self.y - 1] == 0:
-                self.map[self.x][self.y - 1] = 2
-                self.map[self.x][self.y] = 0
-                self.y = self.y - 1
-        elif self.press_buttons[3] == 1:
-            if self.map[self.x][self.y + 1] == 0:
-                self.map[self.x][self.y + 1] = 2
-                self.map[self.x][self.y] = 0
-                self.y = self.y + 1
+        self.current_chromosome.frames += 1
+        self.current_chromosome.distance = x
 
-    def game_timer(self):
-        # 키 배열: B, NULL, SELECT, START, U, D, L, R, A
-        # b = 66, u = 16777235, d = 16777237, l = 16777234, r = 16777236, a = 65
-        # self.env.step(np.array([0, 0, 0, 0, 0, 0, 0, 0, 0]))
-        self.step()
-        # self.update_screen()
-        self.update()
-        #print(self.press_buttons)
+        # 문 배열
+        for i in range(2):
+            if main_map[8][i + 2] == 2:
+                socket_check[0] = '1'
 
-        #print(self.screen)
+        for i in range(2):
+            if main_map[3][i + 8] == 2:
+                socket_check[1] = '1'
 
-    # 키를 누를 때
-    # def keyPressEvent(self, event):
-    #     key = event.key()
-    #     print(str(key) + ' press')
+        for i in range(2):
+            if main_map[3][i + 14] == 2:
+                socket_check[2] = '1'
 
-    def keyPressEvent(self, event):
-        key = event.key()
-        if key == 16777235:
-            self.press_buttons[0] = 1
-        elif key == 16777237:
-            self.press_buttons[1] = 1
-        elif key == 16777234:
-            self.press_buttons[2] = 1
-        elif key == 16777236:
-            self.press_buttons[3] = 1
+        for i in range(2):
+            for j in range(2):
+                if main_map[i + 6][j + 11] == 2:
+                    socket_check[3] = '1'
 
-    # 키를 뗄 때
-    # def keyReleaseEvent(self, event):
-    #     key = event.key()
-    #     print(str(key) + ' release')
+        for i in range(2):
+            if main_map[15][i + 7] == 2:
+                socket_check[4] = '1'
 
-    def keyReleaseEvent(self, event):
-        key = event.key()
-        if key == 16777235:
-            self.press_buttons[0] = 0
-        elif key == 16777237:
-            self.press_buttons[1] = 0
-        elif key == 16777234:
-            self.press_buttons[2] = 0
-        elif key == 16777236:
-            self.press_buttons[3] = 0
+        for i in range(2):
+            if main_map[20][i + 7] == 2:
+                socket_check[5] = '1'
+
+        for i in range(2):
+            for j in range(2):
+                if main_map[i + 11][j + 11] == 2:
+                    socket_check[6] = '1'
+
+        for i in range(2):
+            if main_map[i + 22][5] == 2:
+                socket_check[7] = '1'
+
+        # 점수 체계
+        for i in range(2):
+            if self.map[26][i + 3] == 2:
+                self.current_chromosome.win1 = 1
+                break
+
+        for i in range(5):
+            if self.map[26][i + 9] == 2:
+                self.current_chromosome.win5 = 1
+                break
+
+        # 정지 조건 관련 변수
+        if self.current_chromosome.max_distance < self.current_chromosome.distance:
+            self.current_chromosome.max_distance = self.current_chromosome.distance
+            self.current_chromosome.stop_frames = 0
+        else:
+            self.current_chromosome.stop_frames += 1
+
+        if time_check == 0 and (self.current_chromosome.stop_frames > 5 or self.current_chromosome.win1 == 1 or self.current_chromosome.win5 == 1):
+            time_check += 1
+
+        elif time_check == 300:
+            Web_Socket_Client.sendstring(socket_check)
+            self.current_chromosome.clear()
+            self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
+
+            time_check = 0
+            print(x, y, generation)
+
+        elif time_check != 0:
+            time_check += 1
+
+            predict = self.current_chromosome.predict(input_data)
+            press_buttons = np.array([predict[0], predict[1], predict[2], predict[3]])
+
+            self.step(press_buttons)
+
+            painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))
+
+            weather_text = ['온도', '습도', '풍향', '풍속']
+            door_text = ['1번문', '2번문', '3번문', '4번문', '5번문', '6번문', '7번문', '8번문']
+
+            for i in range(4):
+                painter.drawText(288 + 70 + i * 75 - 5, 50, weather_text[i])
+                painter.drawText(288 + 70 + i * 75 - 5, 70, weather[i])
+
+            for i in range(8):
+                painter.drawText(288 + 42.5 + i * 40 - 5, 130 + 16, door_text[i])
+
+            for i in range(8):
+                if socket_check[i] == '1':
+                    painter.setPen(QPen(Qt.green, 2.0, Qt.SolidLine))
+                    painter.drawText(288 + 45 + i * 40 - 5, 150 + 16, '열림')
+                else:
+                    painter.setPen(QPen(Qt.red, 2.0, Qt.SolidLine))
+                    painter.drawText(288 + 45 + i * 40 - 5, 150 + 16, '닫침')
+
+            painter.setPen(QPen(Qt.black, 2.0, Qt.SolidLine))
+            for i in range(predict.shape[0]):
+                painter.setBrush(QBrush(QColor.fromHslF(0.8, 0 if predict[i] <= 0.5 else 1, 0.8)))
+                # 세로 가로
+                painter.drawEllipse(288 + 72 + i * 40, 390 + 10, 16 * 2, 16 * 2)
+                text = ('U', 'D', 'L', 'R')[i]
+                painter.drawText(288 + 72 + i * 40 - 5, 420 + 16, text)
+
+            painter.end()
+
+        else:
+            predict = self.current_chromosome.predict(input_data)
+            press_buttons = np.array([predict[0], predict[1], predict[2], predict[3]])
+
+            self.step(press_buttons)
+
+            painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))
+
+            weather_text = ['온도', '습도', '풍향', '풍속']
+            door_text = ['1번문', '2번문', '3번문', '4번문', '5번문', '6번문', '7번문', '8번문']
+
+            for i in range(4):
+                painter.drawText(288 + 70 + i * 75 - 5, 50, weather_text[i])
+                painter.drawText(288 + 70 + i * 75 - 5, 70, weather[i])
+
+            for i in range(8):
+                painter.drawText(288 + 42.5 + i * 40 - 5, 130 + 16, door_text[i])
+
+            for i in range(8):
+                if socket_check[i] == '1':
+                    painter.setPen(QPen(Qt.green, 2.0, Qt.SolidLine))
+                    painter.drawText(288 + 45 + i * 40 - 5, 150 + 16, '열림')
+                else:
+                    painter.setPen(QPen(Qt.red, 2.0, Qt.SolidLine))
+                    painter.drawText(288 + 45 + i * 40 - 5, 150 + 16, '닫침')
+
+            painter.setPen(QPen(Qt.black, 2.0, Qt.SolidLine))
+            for i in range(predict.shape[0]):
+                painter.setBrush(QBrush(QColor.fromHslF(0.8, 0 if predict[i] <= 0.5 else 1, 0.8)))
+                #세로 가로
+                painter.drawEllipse(288 + 72 + i * 40, 390 + 10, 16 * 2, 16 * 2)
+                text = ('U', 'D', 'L', 'R')[i]
+                painter.drawText(288 + 72 + i * 40 - 5, 420 + 16, text)
+
+        painter.end()
 
 
 if __name__ == '__main__':
-   app = QApplication(sys.argv)
-   window = MyApp()
-   sys.exit(app.exec_())
+    app = QApplication(sys.argv)
+    ventilation = Ventilation()
+    exit(app.exec_())
