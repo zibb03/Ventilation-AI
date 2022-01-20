@@ -2,7 +2,7 @@ import websocket
 import time
 
 ws = websocket.WebSocket()
-ws.connect("ws://192.168.35.62/")
+# ws.connect("ws://192.168.0.14/")
 
 # i = 0
 # nrOfMessages = 200
@@ -15,6 +15,8 @@ ws.connect("ws://192.168.35.62/")
 #     time.sleep(1)
 
 def sendstring(string):
+    # ws = websocket.WebSocket()
+    ws.connect("ws://192.168.0.14/")
     for i in range(6):
         ws.send("message nr: " + str(string[i]))
         result = ws.recv()

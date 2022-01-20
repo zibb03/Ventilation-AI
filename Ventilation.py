@@ -101,7 +101,7 @@ class Chromosome:
         time_check = 0
 
         if generation == 10:
-            Web_Socket_Client.ending()
+            # Web_Socket_Client.ending()
             time.sleep(5)
             exit(0)
 
@@ -360,7 +360,7 @@ class Ventilation(QWidget):
         painter.drawRect(8 * 16, 21 * 16, 2 * 16, 1 * 16)
         painter.drawRect(6 * 16, 23 * 16, 1 * 16, 2 * 16)
         painter.drawRect(3 * 16, 27 * 16, 2 * 16, 1 * 16)
-        painter.drawRect(8 * 16, 27 * 16, 4 * 16, 1 * 16)
+        painter.drawRect(10 * 16, 27 * 16, 4 * 16, 1 * 16)
 
         input_data = self.map.flatten()
 
@@ -423,8 +423,10 @@ class Ventilation(QWidget):
         if time_check == 0 and (self.current_chromosome.stop_frames > 5 or self.current_chromosome.win1 == 1 or self.current_chromosome.win5 == 1):
             time_check += 1
 
-        elif time_check == 300:
+        elif time_check == 600:
+            # print(socket_check)
             Web_Socket_Client.sendstring(socket_check)
+            Web_Socket_Client.ending()
             self.current_chromosome.clear()
             self.map = np.load('C:/Users/user/Documents/GitHub/Ventilation-AI/map/map1.npy')
 
@@ -441,12 +443,20 @@ class Ventilation(QWidget):
 
             painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))
 
-            weather_text = ['온도', '습도', '풍향', '풍속']
+            weather_text = ['온도', '습도', '풍향', '풍속', '미세먼지', '초미세먼지']
             door_text = ['1번문', '2번문', '3번문', '4번문', '5번문', '6번문', '7번문', '8번문']
 
-            for i in range(4):
-                painter.drawText(288 + 70 + i * 75 - 5, 50, weather_text[i])
-                painter.drawText(288 + 70 + i * 75 - 5, 70, weather[i])
+            for i in range(6):
+                if i == 4:
+                    painter.drawText(288 + 40 + i * 55 - 20, 50, weather_text[i])
+                    painter.drawText(288 + 40 + i * 55 - 10, 70, weather[i])
+                elif i == 5:
+                    painter.drawText(288 + 40 + i * 55 - 25, 50, weather_text[i])
+                    painter.drawText(288 + 40 + i * 55 - 5, 70, weather[i])
+                else:
+                    painter.drawText(288 + 50 + i * 50 - 5, 50, weather_text[i])
+                    painter.drawText(288 + 50 + i * 50 - 5, 70, weather[i])
+
 
             for i in range(8):
                 painter.drawText(288 + 42.5 + i * 40 - 5, 130 + 16, door_text[i])
@@ -477,12 +487,19 @@ class Ventilation(QWidget):
 
             painter.setPen(QPen(Qt.black, 2, Qt.SolidLine))
 
-            weather_text = ['온도', '습도', '풍향', '풍속']
+            weather_text = ['온도', '습도', '풍향', '풍속', '미세먼지', '초미세먼지']
             door_text = ['1번문', '2번문', '3번문', '4번문', '5번문', '6번문', '7번문', '8번문']
 
-            for i in range(4):
-                painter.drawText(288 + 70 + i * 75 - 5, 50, weather_text[i])
-                painter.drawText(288 + 70 + i * 75 - 5, 70, weather[i])
+            for i in range(6):
+                if i == 4:
+                    painter.drawText(288 + 40 + i * 55 - 20, 50, weather_text[i])
+                    painter.drawText(288 + 40 + i * 55 - 10, 70, weather[i])
+                elif i == 5:
+                    painter.drawText(288 + 40 + i * 55 - 25, 50, weather_text[i])
+                    painter.drawText(288 + 40 + i * 55 - 5, 70, weather[i])
+                else:
+                    painter.drawText(288 + 50 + i * 50 - 5, 50, weather_text[i])
+                    painter.drawText(288 + 50 + i * 50 - 5, 70, weather[i])
 
             for i in range(8):
                 painter.drawText(288 + 42.5 + i * 40 - 5, 130 + 16, door_text[i])
